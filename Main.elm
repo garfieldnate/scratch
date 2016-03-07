@@ -1,8 +1,9 @@
 import Html exposing (text, div, span)
 import Html.Attributes exposing (style)
+import Html.Events exposing (onClick)
 import String exposing (slice, length)
 import DynamicStyle exposing (hover)
-import List
+import Signal exposing (Mailbox)
 
 --Next: use a mailbox to display a word
 
@@ -16,14 +17,18 @@ model = {
   tokens = [{start = 0, end=4}, {start = 6, end=7}, {start=9, end=12}, {start=14, end=15}, {start=17, end=22}]
   }
 
-highlightStyle =
+selectedWordsMailbox : Mailbox Token
+selectedWordsMailbox = Signal.mailbox {start = -1, end = -1}
+
+textStyle : List(Html.Attribute)
+textStyle =
   (hover [("backgroundColor","white","#82caff")])
   --style
   --  [ ("backgroundColor", "#82caff")
   --  ]
 
-highlight : String -> Int -> List(Token) -> List(Html.Html)
-highlight modelText ind tokens =
+textHtml : Mailbox Token -> String -> Int -> List(Token) -> List(Html.Html)
+textHtml mailbox modelText ind tokens =
   case tokens of
     hd::tl ->
     let
@@ -32,10 +37,10 @@ highlight modelText ind tokens =
     in
       [
         text betweenText,
-        span highlightStyle [
+        span ((textStyle)++[onClick mailbox.address hd]) [
           text tokenText
           ]
-         ] ++ (highlight modelText (hd.end + 1) tl)
+         ] ++ (textHtml mailbox modelText (hd.end + 1) tl)
     [] ->
       if ind < (length modelText)
       then [
@@ -43,20 +48,20 @@ highlight modelText ind tokens =
         ]
       else []
 
-textWindow : String -> List(Token) -> Html.Html
+textWindow : Mailbox Token -> String -> List(Token) -> Html.Html
 -- Left 80% contains text, right 20% contains vocab last
-textWindow modelText tokens =
+textWindow mailbox modelText tokens =
   div [
     style [("width", "100%"), ("overflow", "auto") ]
     ] [
       div [
         style [("float", "left"), ("width", "80%")]
-      ] (highlight modelText 0 tokens),
+      ] (textHtml mailbox modelText 0 tokens),
       div [
-        style [("float", "right")]
-      ] []
+        style [("float", "right"), ("border-left", "thick double")]
+      ] [] --next: add list of vocab here, and add more when click on
     ]
 
 main =
-  (textWindow model.text model.tokens)
+  (textWindow selectedWordsMailbox model.text model.tokens)
 
