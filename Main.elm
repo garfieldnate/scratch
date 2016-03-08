@@ -1,11 +1,14 @@
-import Html exposing (text, div, span)
+import Html exposing (Html, text, div, span)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 import String exposing (slice, length)
 import DynamicStyle exposing (hover)
-import Signal exposing (Mailbox)
+import Signal exposing (Mailbox, Signal)
 
 --Next: use a mailbox to display a word
+
+type Action =
+  ListWord Token | Nothing
 
 type alias Token = {
   start : Int,
@@ -14,11 +17,17 @@ type alias Token = {
 
 model = {
   text = "Hello my name is Nathan.",
-  tokens = [{start = 0, end=4}, {start = 6, end=7}, {start=9, end=12}, {start=14, end=15}, {start=17, end=22}]
+  tokens = [
+      {start = 0, end = 4},
+      {start = 6, end = 7},
+      {start = 9, end = 12},
+      {start = 14, end = 15},
+      {start = 17, end = 22}
+    ]
   }
 
-selectedWordsMailbox : Mailbox Token
-selectedWordsMailbox = Signal.mailbox {start = -1, end = -1}
+actionMailbox : Mailbox Action
+actionMailbox = Signal.mailbox Nothing
 
 textStyle : List(Html.Attribute)
 textStyle =
@@ -27,7 +36,7 @@ textStyle =
   --  [ ("backgroundColor", "#82caff")
   --  ]
 
-textHtml : Mailbox Token -> String -> Int -> List(Token) -> List(Html.Html)
+textHtml : Mailbox Action -> String -> Int -> List(Token) -> List(Html)
 textHtml mailbox modelText ind tokens =
   case tokens of
     hd::tl ->
@@ -37,7 +46,7 @@ textHtml mailbox modelText ind tokens =
     in
       [
         text betweenText,
-        span ((textStyle)++[onClick mailbox.address hd]) [
+        span ((textStyle)++[onClick mailbox.address (ListWord hd)]) [
           text tokenText
           ]
          ] ++ (textHtml mailbox modelText (hd.end + 1) tl)
@@ -48,7 +57,7 @@ textHtml mailbox modelText ind tokens =
         ]
       else []
 
-textWindow : Mailbox Token -> String -> List(Token) -> Html.Html
+textWindow : Mailbox Action -> String -> List(Token) -> Html
 -- Left 80% contains text, right 20% contains vocab last
 textWindow mailbox modelText tokens =
   div [
@@ -62,6 +71,7 @@ textWindow mailbox modelText tokens =
       ] [] --next: add list of vocab here, and add more when click on
     ]
 
+main : Signal Html
 main =
-  (textWindow selectedWordsMailbox model.text model.tokens)
+  Signal.map (textWindow actionMailbox model.text model.tokens) actionMailbox.signal
 
