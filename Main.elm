@@ -36,8 +36,8 @@ textStyle =
   --  [ ("backgroundColor", "#82caff")
   --  ]
 
-textHtml : Mailbox Action -> String -> Int -> List(Token) -> List(Html)
-textHtml mailbox modelText ind tokens =
+textHtml : Signal.Address Action -> String -> Int -> List(Token) -> List(Html)
+textHtml address modelText ind tokens =
   case tokens of
     hd::tl ->
     let
@@ -46,10 +46,10 @@ textHtml mailbox modelText ind tokens =
     in
       [
         text betweenText,
-        span ((textStyle)++[onClick mailbox.address (ListWord hd)]) [
+        span ((textStyle)++[onClick address (ListWord hd)]) [
           text tokenText
           ]
-         ] ++ (textHtml mailbox modelText (hd.end + 1) tl)
+         ] ++ (textHtml address modelText (hd.end + 1) tl)
     [] ->
       if ind < (length modelText)
       then [
@@ -57,21 +57,24 @@ textHtml mailbox modelText ind tokens =
         ]
       else []
 
-textWindow : Mailbox Action -> String -> List(Token) -> Html
+textWindow : Signal.Address Action -> String -> List(Token) -> Html
 -- Left 80% contains text, right 20% contains vocab last
-textWindow mailbox modelText tokens =
+textWindow address modelText tokens =
   div [
     style [("width", "100%"), ("overflow", "auto") ]
     ] [
       div [
         style [("float", "left"), ("width", "80%")]
-      ] (textHtml mailbox modelText 0 tokens),
+      ] (textHtml address modelText 0 tokens),
       div [
         style [("float", "right"), ("border-left", "thick double")]
       ] [] --next: add list of vocab here, and add more when click on
     ]
 
+update address action =
+  textWindow address model.text model.tokens
+
 main : Signal Html
 main =
-  Signal.map (textWindow actionMailbox model.text model.tokens) actionMailbox.signal
+  Signal.map (update actionMailbox.address) actionMailbox.signal
 
