@@ -8,14 +8,21 @@ import Signal exposing (Mailbox, Signal)
 --Next: use a mailbox to display a word
 
 type Action =
-  ListWord Token | Nothing
+  ListWord Token | NoOp
 
 type alias Token = {
   start : Int,
   end : Int
   }
 
-model = {
+type alias Model = {
+  text : String,
+  tokens : List(Token),
+  display: List(Token)
+}
+
+initialModel : Model
+initialModel = {
   text = "Hello my name is Nathan.",
   tokens = [
       {start = 0, end = 4},
@@ -23,11 +30,22 @@ model = {
       {start = 9, end = 12},
       {start = 14, end = 15},
       {start = 17, end = 22}
-    ]
+    ],
+    display = []
   }
 
+update : Action -> Model -> Model
+update action model =
+    case action of
+      NoOp -> model
+      ListWord token -> { model | display = token::model.display}
+
 actionMailbox : Mailbox Action
-actionMailbox = Signal.mailbox Nothing
+actionMailbox = Signal.mailbox NoOp
+
+modelSignal : Signal Model
+modelSignal =
+  Signal.foldp update initialModel actionMailbox.signal
 
 textStyle : List(Html.Attribute)
 textStyle =
@@ -57,24 +75,30 @@ textHtml address modelText ind tokens =
         ]
       else []
 
-textWindow : Signal.Address Action -> String -> List(Token) -> Html
--- Left 80% contains text, right 20% contains vocab last
-textWindow address modelText tokens =
+listHtml address display =
+  case display of
+    hd::tl ->
+    [
+      span [] [
+        text (toString hd.start)
+        ]
+       ] ++ (listHtml address tl)
+    [] -> []
+
+view : Signal.Address Action -> Model -> Html
+view address model =
   div [
     style [("width", "100%"), ("overflow", "auto") ]
     ] [
       div [
         style [("float", "left"), ("width", "80%")]
-      ] (textHtml address modelText 0 tokens),
+      ] (textHtml address model.text 0 model.tokens),
       div [
         style [("float", "right"), ("border-left", "thick double")]
-      ] [] --next: add list of vocab here, and add more when click on
+      ] (listHtml address model.display)
     ]
-
-update address action =
-  textWindow address model.text model.tokens
 
 main : Signal Html
 main =
-  Signal.map (update actionMailbox.address) actionMailbox.signal
+  Signal.map (view actionMailbox.address) modelSignal
 
