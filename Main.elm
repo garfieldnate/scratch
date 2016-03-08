@@ -76,14 +76,10 @@ textHtml address modelText ind tokens =
       else []
 
 listHtml address display =
-  case display of
-    hd::tl ->
-    [
-      span [] [
-        text (toString hd.start)
-        ]
-       ] ++ (listHtml address tl)
-    [] -> []
+  let writeSpan token =
+    span [] [text (toString token.start)]
+  in
+    List.map writeSpan display
 
 view : Signal.Address Action -> Model -> Html
 view address model =
