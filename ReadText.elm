@@ -6,6 +6,9 @@ import Html.Events exposing (onClick)
 import String exposing (slice, length)
 import DynamicStyle exposing (hover)
 import Signal exposing (Mailbox, Signal)
+import Http
+import Task exposing (Task, andThen)
+import Json.Decode exposing (Decoder, decodeString)
 
 --Next: use a mailbox to display a word
 
@@ -41,6 +44,7 @@ update action model =
     case action of
       NoOp -> model
       ListWord token -> { model | display = token::model.display}
+      UpdateFromServer newModel -> newModel
 
 actionMailbox : Mailbox Action
 actionMailbox = Signal.mailbox NoOp
@@ -95,3 +99,13 @@ view address model =
         style [("float", "right"), ("border-left", "thick double")]
       ] (listHtml address model.display)
     ]
+
+report : String -> Task x ()
+report fetchedModel =
+  Signal.send actionMailbox.address (UpdateFromServer fetchedModel)
+
+textUrl = "http://localhost:3000/en"
+
+port fetchModel : Task Http.Error ()
+port fetchModel =
+  Http.get (decodeString Decoder Model) textUrl `andThen` report

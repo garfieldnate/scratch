@@ -1,20 +1,9 @@
 import ReadText
 import Html exposing (Html, text, div, span)
-import Html.Attributes exposing (style)
-import Html.Events exposing (onClick)
-import String exposing (slice, length)
-import DynamicStyle exposing (hover)
 import Signal exposing (Mailbox, Signal)
-
---Next: use a mailbox to display a word
 
 type Action =
   ReadTextAction ReadText.Action | NoOp
-
-type alias Token = {
-  start : Int,
-  end : Int
-  }
 
 type alias Model = {
   readTextModel: ReadText.Model
