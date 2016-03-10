@@ -8,7 +8,8 @@ import DynamicStyle exposing (hover)
 import Signal exposing (Mailbox, Signal)
 import Http
 import Task exposing (Task, andThen)
-import Json.Decode exposing (Decoder, decodeString)
+import Effects exposing (Effects)
+import Json.Decode exposing (decodeValue, Decoder)
 
 --Next: use a mailbox to display a word
 
@@ -26,39 +27,35 @@ type alias Model = {
   display: List(Token)
 }
 
-initialModel : Model
-initialModel = {
-  text = "Hello my name is Nathan.",
-  tokens = [
-      {start = 0, end = 4},
-      {start = 6, end = 7},
-      {start = 9, end = 12},
-      {start = 14, end = 15},
-      {start = 17, end = 22}
-    ],
+init : (Model, Effects Action)
+init = ({
+  text = "",
+  tokens = [],
     display = []
-  }
+  }, Effects.none)
 
-update : Action -> Model -> Model
+update : Action -> Model -> (Model, Effects Action)
 update action model =
     case action of
-      NoOp -> model
-      ListWord token -> { model | display = token::model.display}
-      UpdateFromServer newModel -> newModel
+      NoOp -> (model, Effects.none)
+      ListWord token -> ({ model | display = token::model.display}, Effects.none)
+      NewText fetchedModel -> ({
+        text = fetchedModel.text,
+        tokens = fetchedModel.tokens,
+        display = []
+      }, Effects.none)
 
 actionMailbox : Mailbox Action
 actionMailbox = Signal.mailbox NoOp
 
-modelSignal : Signal Model
+--Next: update as shown in http://www.elm-tutorial.org/040_effects/effects_2.html
+modelSignal : Signal (Model, Effects Action)
 modelSignal =
-  Signal.foldp update initialModel actionMailbox.signal
+  Signal.foldp update init actionMailbox.signal
 
 textStyle : List(Html.Attribute)
 textStyle =
   (hover [("backgroundColor","white","#82caff")])
-  --style
-  --  [ ("backgroundColor", "#82caff")
-  --  ]
 
 textHtml : Signal.Address Action -> String -> Int -> List(Token) -> List(Html)
 textHtml address modelText ind tokens =
@@ -100,12 +97,17 @@ view address model =
       ] (listHtml address model.display)
     ]
 
-report : String -> Task x ()
-report fetchedModel =
-  Signal.send actionMailbox.address (UpdateFromServer fetchedModel)
-
 textUrl = "http://localhost:3000/en"
 
-port fetchModel : Task Http.Error ()
-port fetchModel =
-  Http.get (decodeString Decoder Model) textUrl `andThen` report
+requestText :Effects Action
+requestText =
+  Http.get decodeText textUrl
+    |> Task.toMaybe
+    |> Task.map NewText
+    |> Effects.task
+
+decodeText =
+  decodeValue (Decoder Model)
+    --object2 (,)
+    --  ("text" := string)
+    --  ("text" := List(Token))
