@@ -1,3 +1,4 @@
+--originally by identicalsnowflake (project seems abandoned)
 module DynamicStyle where
 
 {-|
