@@ -98,7 +98,7 @@ listHtml address display =
     div [class "item"] [text (toString token.start)]
   in
     div [
-        class "ui right sidebar vertical inverted menu"
+        class "ui right sidebar vertical inverted menu visible"
     ] (List.map writeSpan display)
 
 view : Signal.Address Action -> Model -> Html
