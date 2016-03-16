@@ -2,8 +2,8 @@
 module ReadText (..) where
 
 import StartApp
-import Html exposing (Html, text, div, span, button)
-import Html.Attributes exposing (style)
+import Html exposing (Html, text, div, body, span, button)
+import Html.Attributes exposing (style, class)
 import Html.Events exposing (onClick)
 import String exposing (slice, length)
 import DynamicStyle exposing (hover)
@@ -92,27 +92,30 @@ textHtml address modelText ind tokens =
         ]
       else []
 
+listHtml : Signal.Address Action -> List(Token) -> Html
 listHtml address display =
   let writeSpan token =
-    span [] [text (toString token.start)]
+    div [class "item"] [text (toString token.start)]
   in
-    List.map writeSpan display
+    div [
+        class "ui right sidebar vertical inverted menu"
+    ] (List.map writeSpan display)
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div [
-    style [("width", "100%"), ("overflow", "auto") ]
-    ] [
+  div [] [
+    (listHtml address model.display),
       div [
-        style [("float", "left"), ("width", "80%")]
-      ] (textHtml address model.text 0 model.tokens),
-      div [
-        style [("float", "right"), ("border-left", "thick double")]
-      ] (listHtml address model.display),
-      button [
-        onClick address Refresh
-      ] [ text "Refresh" ]
-    ]
+        class "pusher"
+      ] (List.concat [
+        (textHtml address model.text 0 model.tokens),
+          [
+            button [
+            onClick address Refresh
+            ] [ text "Refresh" ]
+          ]
+        ])
+  ]
 
 decodeText : Json.Decoder Model
 decodeText =
