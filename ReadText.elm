@@ -103,18 +103,20 @@ listHtml address display =
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-  div [] [
-    (listHtml address model.display),
+  div [
+        class "ui bottom attached segment pushable"
+      ] [
       div [
         class "pusher"
       ] (List.concat [
         (textHtml address model.text 0 model.tokens),
           [
             button [
-            onClick address Refresh
+            onClick address Refresh, class "ui button"
             ] [ text "Refresh" ]
           ]
         ])
+     , (listHtml address model.display)
   ]
 
 decodeText : Json.Decoder Model
