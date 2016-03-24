@@ -4,25 +4,35 @@
     "tokens": [
       {
         "start": 0,
-        "end": 4
+        "end": 4,
+        "lemma": "hello",
+        "details": {"POS":"interjection"}
       },
       {
         "start": 6,
-        "end": 7
+        "end": 7,
+        "lemma":"my",
+        "details": {"POS":"pronoun"}
       },
       {
         "start": 9,
-        "end": 12
+        "end": 12,
+        "lemma":"name",
+        "details": {"POS":"noun"}
       },
       {
         "start": 14,
-        "end": 15
+        "end": 15,
+        "lemma":"to be",
+        "details": {"POS":"verb"}
       },
       {
         "start": 17,
-        "end": 22
+        "end": 22,
+        "lemma":"Nathan",
+        "details": {"POS":"proper noun"}
       }
     ],
-    "display": []
+    "vocab": []
   }
 }

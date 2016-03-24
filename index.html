@@ -7,6 +7,15 @@
     <script type="text/javascript" src="./css/semantic.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/semantic.min.css" />
     <script type="text/javascript" src="/_reactor/debug.js"></script>
+    <script>
+      $(document)
+        .ready(function() {
+          $('.item')
+            .popup({
+              inline: true
+            })
+        });
+    </script>
   </head>
   <body>
     <div id="app" style="height:100vh"></div>

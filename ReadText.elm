@@ -12,43 +12,53 @@ import Http
 import Task exposing (Task, andThen)
 import Effects exposing (Effects)
 import Json.Decode as Json exposing ((:=))
+import Dict exposing (Dict)
 
 --Next: use a mailbox to display a word
 
 type Action =
-  ListWord Token
+  ListWord Vocab
   | Refresh
   | NewText (Maybe Model)
   | NoOp
 
 type alias Token = {
-  start : Int,
-  end : Int
+    start : Int
+  , end : Int
+  , lemma : String
+  , details : Dict String String
   }
+
+type alias Vocab = {
+    lemma : String
+  , example : String
+  , definition : String
+  , tags: Dict String String
+}
 
 type alias Model = {
   text : String,
   tokens : List(Token),
-  display: List(Token)
+  vocab : List(Vocab)
 }
 
 init : (Model, Effects Action)
 init = ({
   text = "",
   tokens = [],
-    display = []
+    vocab = []
   }, Effects.none)
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
     case action of
       NoOp -> (model, Effects.none)
-      ListWord token -> (
-        { model | display = token::model.display}, Effects.none)
+      ListWord v -> (
+        { model | vocab = v::model.vocab}, Effects.none)
       NewText fetchedModel ->
         case fetchedModel of
           Just fm -> (fm, Effects.none)
-          Nothing -> ({text = "nothing retrieved", tokens = [], display = []}, Effects.none)
+          Nothing -> ({text = "nothing retrieved", tokens = [], vocab = []}, Effects.none)
       Refresh -> (model, refreshFx)
 
 textUrl = "http://localhost:3000/en"
@@ -81,7 +91,7 @@ textHtml address modelText ind tokens =
     in
       [
         text betweenText,
-        span ((textStyle)++[onClick address (ListWord hd)]) [
+        span ((textStyle)++[onClick address (ListWord (token2vocab hd))]) [
           text tokenText
           ]
          ] ++ (textHtml address modelText (hd.end + 1) tl)
@@ -92,23 +102,37 @@ textHtml address modelText ind tokens =
         ]
       else []
 
-listHtml : Signal.Address Action -> List(Token) -> Html
-listHtml address display =
-  let writeSpan token =
-    div [class "item"] [text (toString token.start)]
+token2vocab: Token -> Vocab
+token2vocab token = {
+    lemma = token.lemma
+  , tags = token.details
+  , example = "" --TODO
+  , definition = "" --TODO
+  }
+
+listHtml : Signal.Address Action -> List(Vocab) -> Html
+listHtml address vocab =
+  let writeSpan v =
+    div [] [
+      div [class "item"] [
+        text v.lemma
+      ]
+      , div [class "ui special popup"] [
+          div [class "header"] [text v.lemma]
+        , div [] [text v.definition]
+      ]
+    ]
   in
     div [
-        class "ui right sidebar vertical inverted menu visible"
-    ] (List.map writeSpan display)
+        class "ui celled list"
+    ] (List.map writeSpan vocab)
 
 view : Signal.Address Action -> Model -> Html
 view address model =
   div [
-        class "ui bottom attached segment pushable"
+        class "ui bottom attached segment"
       ] [
-      div [
-        class "pusher"
-      ] (List.concat [
+      div [] (List.concat [
         (textHtml address model.text 0 model.tokens),
           [
             button [
@@ -116,17 +140,25 @@ view address model =
             ] [ text "Refresh" ]
           ]
         ])
-     , (listHtml address model.display)
+     , (listHtml address model.vocab)
   ]
 
 decodeText : Json.Decoder Model
 decodeText =
   let token =
-        Json.object2 Token
+        Json.object4 Token
           ("start" := Json.int)
           ("end" := Json.int)
+          ("lemma" := Json.string)
+          ("details" := Json.dict Json.string)
+      vocab =
+        Json.object4 Vocab
+          ("lemma" := Json.string)
+          ("example" := Json.string)
+          ("definition" := Json.string)
+          ("tags" := Json.dict Json.string)
   in
     Json.object3 Model
       ("text" := Json.string)
       ("tokens" := Json.list token)
-      ("display" := Json.list token)
+      ("vocab" := Json.list vocab)
