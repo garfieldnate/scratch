@@ -38,15 +38,15 @@ type alias Vocab = {
 
 type alias Model = {
   text : String,
-  tokens : List(Token),
-  vocab : List(Vocab)
+  tokens : List Token,
+  vocab : Dict String Vocab
 }
 
 init : (Model, Effects Action)
 init = ({
   text = "",
   tokens = [],
-    vocab = []
+    vocab = Dict.fromList []
   }, Effects.none)
 
 update : Action -> Model -> (Model, Effects Action)
@@ -54,11 +54,11 @@ update action model =
     case action of
       NoOp -> (model, Effects.none)
       ListWord v -> (
-        { model | vocab = v::model.vocab}, Effects.none)
+        { model | vocab = Dict.insert v.lemma v model.vocab}, Effects.none)
       NewText fetchedModel ->
         case fetchedModel of
           Just fm -> (fm, Effects.none)
-          Nothing -> ({text = "nothing retrieved", tokens = [], vocab = []}, Effects.none)
+          Nothing -> ({text = "nothing retrieved", tokens = [], vocab = Dict.fromList []}, Effects.none)
       Refresh -> (model, refreshFx)
 
 textUrl = "http://localhost:3000/en"
@@ -110,7 +110,7 @@ token2vocab token = {
   , definition = "" --TODO
   }
 
-listHtml : Signal.Address Action -> List(Vocab) -> Html
+listHtml : Signal.Address Action -> Dict String Vocab -> Html
 listHtml address vocab =
   let writeSpan v =
     div [] [
@@ -125,7 +125,7 @@ listHtml address vocab =
   in
     div [
         class "ui celled list"
-    ] (List.map writeSpan vocab)
+    ] (List.map writeSpan (Dict.values vocab))
 
 view : Signal.Address Action -> Model -> Html
 view address model =
@@ -161,4 +161,4 @@ decodeText =
     Json.object3 Model
       ("text" := Json.string)
       ("tokens" := Json.list token)
-      ("vocab" := Json.list vocab)
+      ("vocab" := Json.dict vocab)
