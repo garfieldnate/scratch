@@ -11,13 +11,6 @@ $icon-size: .8em;
   max-width: 1024px;
   margin-left: auto;
   margin-right: auto;
-  // no space between containers
-  *:last-child {
-    margin-bottom: 0px;
-  }
-  *:first-child {
-    margin-top: 0px;
-  }
 }
 
 body {
@@ -29,7 +22,7 @@ body {
 header {
   @include container($header-color, white);
   // background-color: $header-color;
-  padding-top: 4em;
+  padding-top: 1em;
 }
 .intro {
   margin-top: 2em;

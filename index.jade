@@ -1,8 +1,9 @@
+//- Note: section/header elements need to have .clearfix to avoid spaces between them
 link(script="https://code.jquery.com/jquery-2.2.4.min.js")
 link(rel="stylesheet",href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
 link(rel="stylesheet",href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
 link(rel="stylesheet",href="css/style.css")
-div.container
+  div.container
   nav.navbar.navbar-default.navbar-fixed-top(role="navigator")
     div.navbar-header
       a.navbar-brand qlip
@@ -15,7 +16,7 @@ div.container
         li
           a contact
   main
-    header
+    header.clearfix
       div.row
         div.col-lg-8
           p.intro I'm Nate, an NLP and soon-to-be frontend developer. I have extensive practical experience in software architecture and applied NLP. I'm a big fan of open source.
@@ -24,11 +25,11 @@ div.container
       hr.codey-sep
       p
         | Java developer - NLP practitioner - Open source enthusiast
-    section
+    section.clearfix
       h2 Portfolio
       hr.codey-sep
       | buncha pictures...
-    section
+    section.clearfix
       h2 Contact Me
       hr.codey-sep
       div.row
