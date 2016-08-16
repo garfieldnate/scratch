@@ -64,7 +64,6 @@ section {
 .codey-sep {
     border: none;
     height: 5px;
-    background-color: white;
     max-width: 512px;
     margin-top: 2 * $icon-size;
 
@@ -74,7 +73,6 @@ section {
         display: inline-block;
         position: relative;
         font-size: 2em;
-        color: white;
         padding: 0px .25em 0px .25em;
         top: -$icon-size;
     }
@@ -82,6 +80,8 @@ section {
 
 header .codey-sep {
     text-align: right;
+    background-color: white;
+    color: white;
 
     &:after {
         background-color: $head-foot-color;
@@ -90,6 +90,8 @@ header .codey-sep {
 
 section .codey-sep {
     text-align: center;
+    background-color: $body-color;
+    color: $body-color;
 
     &:after {
         background-color: $section-color;
