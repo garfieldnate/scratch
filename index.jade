@@ -6,15 +6,15 @@ link(rel="stylesheet",href="css/style.css")
 div.container
   nav.navbar.navbar-default.navbar-fixed-top(role="navigator")
     div.navbar-header
-      a.navbar-brand qlip
+      a.navbar-brand Nate Glenn
     div.navbar-right
       ul.nav.navbar-nav
         li.active
-          a(href="#") about
+          a.navbar-btn(href="#") about
         li
-          a portfolio
+          a.navbar-btn portfolio
         li
-          a contact
+          a.navbar-btn contact
   main
     header.clearfix
       div.row
@@ -67,26 +67,40 @@ div.container
         div.col-lg-5.col-lg-offset-6
           p.
             Note: no soliciting or recruiters, por favor!
-  footer
-    div#upper-footer
-      h3 About this page
-      p
-        | Made with (lightning) and (cake) by
-        a(href="#")  Nate Glenn
-        | .
-      h3 Around the web
-        ul.social-list
-          li
-            a.btn.btn-default.btn-circle.btn-lg
-              i.fa.fa-github(aria-hidden="true")
-          li
-            a.btn.btn-default.btn-circle.btn-lg
-              i.fa.fa-google-plus(aria-hidden="true")
-          li
-            a.btn.btn-default.btn-circle.btn-lg
-              i.fa.fa-skype(aria-hidden="true")
-          li
-            a.btn.btn-default.btn-circle.btn-lg
-              i.fa.fa-linkedin(aria-hidden="true")
-    div#lower-footer
-      p Nate Glenn <Copyright> 2016. All rights reversed.
+footer
+  div#upper-footer
+    div.container
+      div.row
+        div.col-lg-3.col-lg-offset-2.text-center
+          h2 About this page
+          p
+            | Made with
+            = ' '
+            i.fa.fa-heart
+            = ' '
+            | and
+            = ' '
+            i.fa.fa-birthday-cake
+            = ' '
+            | by
+            = ' '
+            a(href="#") Nate Glenn
+            | .
+        div.col-lg-3.col-lg-offset-2.text-center
+          h2 Around the web
+            ul.social-list
+              li: a.btn.btn-default.btn-circle.btn-lg
+                i.fa.fa-github(aria-hidden="true")
+              li: a.btn.btn-default.btn-circle.btn-lg
+                i.fa.fa-google-plus(aria-hidden="true")
+              li: a.btn.btn-default.btn-circle.btn-lg
+                i.fa.fa-skype(aria-hidden="true")
+              li: a.btn.btn-default.btn-circle.btn-lg
+                i.fa.fa-linkedin(aria-hidden="true")
+  div#lower-footer.text-center
+    div.container
+    p Nate Glenn
+      = ' '
+      i.fa.fa-copyright
+      = ' '
+      | 2016. All rights reversed.

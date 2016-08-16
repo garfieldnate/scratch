@@ -1,5 +1,5 @@
 $background-color: dimGray;
-$header-color: #aaa;
+$head-foot-color: #aaa;
 $section-color: lightGray;
 $icon-size: 0.8em;
 
@@ -22,9 +22,9 @@ body {
 }
 
 header {
-    @include container($header-color, white);
+    @include container($head-foot-color, white);
 
-    // background-color: $header-color;
+    // background-color: $head-foot-color;
     padding-top: 1em;
 
     p {
@@ -74,7 +74,7 @@ header .codey-sep {
     text-align: right;
 
     &:after {
-        background-color: $header-color;
+        background-color: $head-foot-color;
     }
 }
 
@@ -100,16 +100,31 @@ section .codey-sep {
   margin-bottom: 20px;
 }
 
+#upper-footer {
+  background-color: $head-foot-color;
+  box-shadow: 0px 0px 1px 1px rgba(0,0,0,.2);
+  font-size: 20px;
+  color: white;
+}
+
 .btn-circle.btn-lg {
-    text-align: center;
-    border-radius: 50%;
-    padding: 16px;
-    font-size: 20px;
-    height: 50px;
-    width: 50px;
+  text-align: center;
+  border-radius: 50%;
+  padding: 16px;
+  font-size: 20px;
+  height: 50px;
+  width: 50px;
 }
 
-.social-list li {
+.social-list {
+  li {
     display: inline;
+  }
+  padding: 0px;
 }
 
+#lower-footer {
+  color: white;
+  padding-top: 1em;
+  font-size: 20px;
+}
