@@ -6,7 +6,7 @@ $icon-size: 0.8em;
 @mixin container($bg-color, $text-color) {
     background-color: $bg-color;
     color: $text-color;
-    font-size: 20px;
+    font-size: 24px;
 
     // centered with good margins
     max-width: 1024px;
@@ -34,14 +34,17 @@ header {
 
 .intro {
     margin-top: 2em;
-}
-
-.titles {
-  font-size: 24px;
+    font-size: 20px;
 }
 
 h2 {
     text-align: center;
+}
+
+.img-circle {
+    border-radius: 50%;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 section {
@@ -83,10 +86,18 @@ section .codey-sep {
     }
 }
 
-.img-circle {
-    border-radius: 50%;
-    margin-top: 1em;
-    margin-bottom: 1em;
+#portfolio {
+  .left-col {
+    text-align: right;
+  }
+  .right-col {
+    text-align: left;
+  }
+}
+
+#portfolio img {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .btn-circle.btn-lg {
@@ -101,3 +112,4 @@ section .codey-sep {
 .social-list li {
     display: inline;
 }
+
