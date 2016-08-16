@@ -1,6 +1,20 @@
 $background-color: dimGray;
 $header-color: #aaa;
 $section-color: lightGray;
+$icon-size: .8em;
+
+@mixin container($bg-color, $text-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  max-width: 1024px;
+  font-size: 24px;
+  *:last-child {
+    margin-bottom: 0px;
+  }
+  *:first-child {
+    margin-top: 0px;
+  }
+}
 
 body {
   background-color: $background-color;
@@ -9,11 +23,21 @@ body {
 }
 
 header {
-  background-color: $header-color;
+  @include container($header-color, white);
+  // background-color: $header-color;
+  padding-top: 4em;
+  p {
+    margin-top: 2em;
+    margin-left: 1em;
+  }
+}
+
+h2 {
+  text-align: center;
 }
 
 section {
-  background-color: $section-color;
+  @include container($section-color, $background-color);
 }
 
 .codey-sep {
@@ -21,6 +45,7 @@ section {
   height: 5px;
   background-color: white;
   max-width: 512px;
+  margin-top: 2*$icon-size;
   &:after {
     content: '\f121';
     font-family: FontAwesome;
@@ -28,18 +53,17 @@ section {
     position: relative;
     font-size: 2em;
     color: white;
-    padding-top: 0px;
     padding: 0px .25em 0px .25em;
-    top: -.8em;
+    top: -$icon-size;
   }
 }
-.codey-sep-header {
+header > .codey-sep {
   text-align: right;
   &:after {
     background-color: $header-color;
   }
 }
-.codey-sep-section {
+section > .codey-sep {
   text-align: center;
   &:after {
     background-color: $section-color;
@@ -49,20 +73,4 @@ section {
 .img-circle {
   border-radius: 50%;
   margin-top: 1em;
-}
-
-header {
-  *:last-child {
-    margin-bottom: 0px;
-  }
-  p {
-    font-size: 24px;
-    margin-top: 2em;
-    margin-left: 1em;
-    color: white;
-  }
-}
-
-h2:first-child {
-  margin: 0px;
 }
