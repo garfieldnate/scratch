@@ -26,6 +26,9 @@ body {
 nav {
   box-shadow: 0px 0px 2px 1px rgba(0,0,0,.2);
 }
+.navbar-nav {
+  margin-right: 1em;
+}
 
 header {
     @include container($head-foot-color, white);
@@ -116,11 +119,14 @@ section .codey-sep {
   margin-bottom: 20px;
 }
 
-@media(min-width: $container-size) {
+// Put "no soliciting" next to the button at the bottom of the form
+#contact-msg {
+  display: flex;
   #note {
-    margin-top: 270px;
+    align-self: flex-end;
   }
 }
+
 
 #upper-footer {
   background-color: $head-foot-color;
