@@ -1,0 +1,67 @@
+link(script="https://code.jquery.com/jquery-2.2.4.min.js")
+link(rel="stylesheet",href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
+link(rel="stylesheet",href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
+link(rel="stylesheet",href="css/style.css")
+div.container
+  nav.navbar.navbar-default.navbar-fixed-top(role="navigator")
+    div.navbar-header
+      a.navbar-brand qlip
+    div.navbar-right
+      ul.nav.navbar-nav
+        li.active
+          a(href="#") about
+        li
+          a portfolio
+        li
+          a contact
+  main
+    header
+      div.row
+        div.col-lg-8
+          p I'm Nate, an NLP and soon-to-be frontend developer. I have extensive practical experience in software architecture and applied NLP. I'm a big fan of open source.
+        div.col-lg-4
+          img.img-circle(src="http://placehold.it/200x200?text=Me!", alt="picture of Nate Glenn")
+      hr.codey-sep.codey-sep-header
+      p
+        | Java developer - NLP practitioner - Open source enthusiast
+    section
+      h2 Portfolio
+      hr.codey-sep.codey-sep-section
+      | buncha pictures...
+    section
+      h2 Contact Me
+      hr.code-sep
+      div.row
+        div.col-lg-5.col-lg-offset-1
+          form
+            div.form-group
+              label(for="name",required="required") Name
+              input#name.form-control(type="text",placeholder="Jane/John Doe")
+            div.form-group
+              label(for="email") Email address
+              input#email.form-control(type="email",placeholder="you@xyz.com")
+            div.form-group
+              label(for="phNum") Phone Number
+              input#phNum.form-control(type="tel",placeholder="Phone Number")
+            div.form-group
+              label(for="message") Message
+              textarea#message.form-control(rows=5,placeholder="Message",required="required")
+            button.btn.btn-default(type="submit") Submit
+        div.col-lg-5
+          p.
+            Want to contact me? Use this handy-dandy form! Tell me about a cool project you're working on, invite me to work for money, or just give me money. Anything's good, really.
+        div.clearfix.visible-lg
+        div.col-lg-5.col-lg-offset-6
+          p.
+            Note: no soliciting or recruiters, o-negai shimasu!
+  footer
+    div#upper-footer
+      h3 About this page
+      p
+        | Made with (lightning) and (cake) by
+        a(href="#") Nate Glenn
+        | .
+      h3 Around the web
+        p Social symbols here...
+    div#lower-footer
+      p Nate Glenn <Copyright> 2016. All rights reversed.

@@ -1,0 +1,5 @@
+.sass-cache
+css/*.css
+css/*.css.map
+*.sublime-workspace
+*.html
