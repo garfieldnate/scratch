@@ -1,86 +1,103 @@
 $background-color: dimGray;
 $header-color: #aaa;
 $section-color: lightGray;
-$icon-size: .8em;
+$icon-size: 0.8em;
 
 @mixin container($bg-color, $text-color) {
-  background-color: $bg-color;
-  color: $text-color;
-  font-size: 24px;
-  // centered with good margins
-  max-width: 1024px;
-  margin-left: auto;
-  margin-right: auto;
+    background-color: $bg-color;
+    color: $text-color;
+    font-size: 20px;
+
+    // centered with good margins
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 body {
-  background-color: $background-color;
-  /* Space for the navbar */
-  padding-top: 50px;
+    background-color: $background-color;
+
+    /* Space for the navbar */
+    padding-top: 50px;
 }
 
 header {
-  @include container($header-color, white);
-  // background-color: $header-color;
-  padding-top: 1em;
+    @include container($header-color, white);
+
+    // background-color: $header-color;
+    padding-top: 1em;
+
+    p {
+        margin-left: 1em;
+    }
 }
+
 .intro {
-  margin-top: 2em;
-  margin-left: 1em;
+    margin-top: 2em;
+}
+
+.titles {
+  font-size: 24px;
 }
 
 h2 {
-  text-align: center;
+    text-align: center;
 }
 
 section {
-  @include container($section-color, $background-color);
+    @include container($section-color, $background-color);
 }
 
 .codey-sep {
-  border: none;
-  height: 5px;
-  background-color: white;
-  max-width: 512px;
-  margin-top: 2*$icon-size;
-  &:after {
-    content: '\f121';
-    font-family: FontAwesome;
-    display: inline-block;
-    position: relative;
-    font-size: 2em;
-    color: white;
-    padding: 0px .25em 0px .25em;
-    top: -$icon-size;
-  }
+    border: none;
+    height: 5px;
+    background-color: white;
+    max-width: 512px;
+    margin-top: 2 * $icon-size;
+
+    &:after {
+        content: '\f121';
+        font-family: FontAwesome;
+        display: inline-block;
+        position: relative;
+        font-size: 2em;
+        color: white;
+        padding: 0px .25em 0px .25em;
+        top: -$icon-size;
+    }
 }
-header > .codey-sep {
-  text-align: right;
-  &:after {
-    background-color: $header-color;
-  }
+
+header .codey-sep {
+    text-align: right;
+
+    &:after {
+        background-color: $header-color;
+    }
 }
-section > .codey-sep {
-  text-align: center;
-  &:after {
-    background-color: $section-color;
-  }
+
+section .codey-sep {
+    text-align: center;
+
+    &:after {
+        background-color: $section-color;
+    }
 }
 
 .img-circle {
-  border-radius: 50%;
-  margin-top: 1em;
+    border-radius: 50%;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .btn-circle.btn-lg {
-  text-align: center;
-  border-radius: 50%;
-  padding: 16px;
-  font-size: 20px;
-  height: 50px;
-  width: 50px;
+    text-align: center;
+    border-radius: 50%;
+    padding: 16px;
+    font-size: 20px;
+    height: 50px;
+    width: 50px;
 }
 
 .social-list li {
-  display: inline;
+    display: inline;
 }
