@@ -45,27 +45,26 @@ div.container
       h2 Contact Me
       hr.codey-sep
       div.row
-        div.col-lg-5.col-lg-offset-1
-          form
-            div.form-group
-              label(for="name",required="required") Name
-              input#name.form-control(type="text",placeholder="Jane/John Doe")
-            div.form-group
-              label(for="email") Email address
-              input#email.form-control(type="email",placeholder="you@xyz.com")
-            div.form-group
-              label(for="phNum") Phone Number
-              input#phNum.form-control(type="tel",placeholder="Phone Number")
-            div.form-group
-              label(for="message") Message
-              textarea#message.form-control(rows=5,placeholder="Message",required="required")
-            button.btn.btn-default(type="submit") Submit
-        div.col-lg-5#contact-msg
+        div.col-lg-5.col-lg-push-6#contact-msg
           p.
             Want to contact me? Use this handy-dandy form! Tell me about a cool project you're working on, invite me to work for money, or just give me money. Anything's good, really.
-        div.col-lg-5.col-lg-offset-6
           p#note.
             Note: no soliciting or recruiters, por favor!
+        div.col-lg-5.col-lg-pull-4
+          form#contact-form
+            div.form-group
+              label(for="name",required="required") Name
+              input#name.form-item(type="text",placeholder="Jane/John Doe")
+            div.form-group
+              label(for="email") Email address
+              input#email.form-item(type="email",placeholder="you@xyz.com")
+            div.form-group
+              label(for="phNum") Phone Number
+              input#phNum.form-item(type="tel",placeholder="Phone Number")
+            div.form-group
+              label(for="message") Message
+              textarea#message.form-item(rows=5,placeholder="Message",required="required")
+            button.btn.btn-default(type="submit") Submit
 footer
   div#upper-footer
     div.container
