@@ -50,13 +50,7 @@ nav {
 
 header {
     @include container($head-foot-color, white);
-
-    // background-color: $head-foot-color;
     padding-top: 1em;
-
-    // p {
-    //     margin-left: 1em;
-    // }
 }
 
 .intro {
@@ -68,7 +62,7 @@ h2 {
     text-align: center;
 }
 
-.img-circle {
+#img-me {
     border-radius: 50%;
     margin-top: 1em;
     margin-bottom: 1em;
@@ -269,4 +263,8 @@ a {
   &:hover,&:visited {
     color: $darker-orange-3;
   }
+}
+// darker-orange-3 looks gross in the social buttons.
+.btn-circle:visited {
+  color: black;
 }
