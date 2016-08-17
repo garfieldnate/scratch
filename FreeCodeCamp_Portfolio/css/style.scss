@@ -1,0 +1,270 @@
+// Primary and secondary colors are orange and gray
+$light-gray: #888;
+$body-color: $light-gray;
+$head-foot-color: $body-color + #222;
+$section-color: $body-color + #666;
+
+$dark-orange: #e57200;
+$darker-orange-1: #cc6500;
+$darker-orange-2: #994c00;
+$darker-orange-3: #7f3f00;
+$lighter-orange: #ff9832;
+
+$header-footer-color: $dark-orange;
+
+$container-size: 1024px;
+$bs-lg: 1200px;
+$bs-sm: 480px;
+$navbar-width: 50px;
+
+@mixin container($bg-color, $text-color) {
+    background-color: $bg-color;
+    color: $text-color;
+    font-size: 24px;
+
+    // centered with good margins
+    max-width: $container-size;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0px 0px 1px 1px rgba(0,0,0,.2);
+    padding: 0px 1em 0px 1em;
+}
+
+body {
+    background-color: $body-color;
+    /* Space for the navbar */
+    padding-top: $navbar-width;
+}
+
+// fix titles of anchored sections being hidden by the navbar
+.anchor {
+  top: $navbar-width;
+  display: block;
+  position: relative;
+  visibility: hidden;
+}
+
+nav {
+  box-shadow: 0px 0px 2px 1px rgba(0,0,0,.2);
+}
+
+header {
+    @include container($head-foot-color, white);
+    padding-top: 1em;
+}
+
+.intro {
+    margin-top: 2em;
+    font-size: 20px;
+}
+
+h2 {
+    text-align: center;
+}
+
+#img-me {
+    border-radius: 50%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+section {
+    @include container($section-color, $body-color);
+}
+
+$icon-size: 0.8em;
+.codey-sep {
+    border: none;
+    height: 5px;
+    max-width: $container-size/2;
+    margin-top: 2 * $icon-size;
+
+    &:after {
+        content: '\f121';
+        font-family: FontAwesome;
+        display: inline-block;
+        position: relative;
+        font-size: 2em;
+        padding: 0px .25em 0px .25em;
+        top: -$icon-size;
+    }
+}
+
+@media(max-width:564px){
+  .codey-sep {
+    width: 85%;
+  }
+}
+
+header .codey-sep {
+    text-align: right;
+    background-color: white;
+    color: white;
+
+    &:after {
+        background-color: $head-foot-color;
+    }
+}
+
+section .codey-sep {
+    text-align: center;
+    background-color: $body-color;
+    color: $body-color;
+
+    &:after {
+        background-color: $section-color;
+    }
+}
+
+@media(min-width: $bs-lg) {
+  #portfolio {
+    .left-col {
+      text-align: right;
+    }
+    .right-col {
+      text-align: left;
+    }
+  }
+}
+
+@media(max-width: $bs-lg - 1) {
+  #portfolio img {
+    max-width: 90%;
+    height: auto;
+    display: inline-block;
+  }
+}
+
+#portfolio img {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+// Put "no soliciting" next to the button at the bottom of the form.
+// There's no non-hacky way to do this...
+@media(min-width: $bs-lg) {
+  #note {
+    margin-top: 420px;
+    margin-bottom: 1em;
+  }
+}
+
+#contact-form {
+  font-size: 30px;
+  label {
+    display: none;
+  }
+  input,textarea {
+    background-color: transparent;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 3px solid rgba(0,0,0,.2);
+    max-width: 90%;
+    margin-left: .5em;
+  }
+  input:focus,textarea:focus {
+    outline: 0;
+    -webkit-appearance: none;
+  }
+  .form-group:not(:last-child) {
+    margin-bottom: 2em;
+  }
+}
+
+#submit {
+  margin-bottom: 2em;
+}
+
+#upper-footer {
+  background-color: $head-foot-color;
+  box-shadow: 0px 0px 1px 1px rgba(0,0,0,.2);
+  font-size: 20px;
+  color: white;
+}
+
+.btn-circle.btn-lg {
+  text-align: center;
+  border-radius: 50%;
+  padding: 16px;
+  font-size: 20px;
+  height: 50px;
+  width: 50px;
+}
+
+.social-list {
+  li {
+    display: inline;
+    a {
+      position: relative;
+      // center these icons exactly in the circle button
+      .fa {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 100%;
+        padding: inherit;
+      }
+    }
+  }
+  padding: 0px;
+}
+
+#lower-footer {
+  padding-top: 1em;
+  font-size: 20px;
+  box-shadow: 0px 0px 1px 1px rgba(0,0,0,.2);
+  height: 100%;
+}
+
+// Everything below is really bad; the proper solution is to customize
+// Bootstrap. Instead I override a bunch of styles to get the colors I want.
+
+#navbar,#lower-footer,.navbar-default .navbar-brand {
+  color: white !important;
+  background-color: $header-footer-color !important;
+}
+
+#navbar {
+  border-color: $darker-orange-1;
+}
+
+.navbar-nav>.active>a {
+  background-color: $lighter-orange !important;
+  color: black !important;
+}
+
+.navbar-nav>li>a {
+  color: white !important;
+}
+
+.navbar-brand:hover {
+  color: black !important;
+  background-color: $lighter-orange !important;
+}
+
+.navbar-default .navbar-toggle {
+  border-color: white !important;
+  &:hover {
+    border-color: $lighter-orange !important;
+    background-color: $lighter-orange;
+    .icon-bar {
+      background-color: black;
+    }
+  }
+  .icon-bar {
+    background-color: white;
+  }
+}
+
+a {
+  color: $darker-orange-2;
+  &:hover,&:visited {
+    color: $darker-orange-3;
+  }
+}
+// darker-orange-3 looks gross in the social buttons.
+.btn-circle:visited {
+  color: black;
+}

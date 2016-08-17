@@ -1,0 +1,123 @@
+//- Note: section/header elements need to have .clearfix to avoid spaces between them
+doctype html
+meta(charset="utf-8")
+meta(http-equiv="X-UA-Compatible", content="IE=edge")
+meta(name="viewport", content="width=device-width, initial-scale=1")
+
+link(rel="stylesheet",href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
+script(src="https://code.jquery.com/jquery-2.2.4.min.js")
+script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous")
+link(rel="stylesheet",href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
+link(rel="stylesheet",href="css/style.css")
+
+body(data-spy="scroll", data-target="#nav-contents")
+  a#about-anchor.anchor
+  div.container
+    nav.navbar.navbar-default.navbar-fixed-top#navbar(role='navigation')
+      div.container-fluid
+        div.navbar-header
+          a.navbar-brand(href='#') Nate Glenn
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target='#nav-contents')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+        div#nav-contents.collapse.navbar-collapse.navbar-right
+          ul.nav.navbar-nav.nav-pills
+            li
+              a(href='#about-anchor'): b About
+            li
+              a(href='#portfolio-anchor'): b Portfolio
+            li
+              a(href="#contact-anchor"): b Contact
+    main
+      header.clearfix#about
+        div.row
+          div.col-lg-8
+            p.intro I'm Nate, an NLP and soon-to-be frontend developer. I have extensive practical experience in software architecture and applied NLP. I'm a big fan of open source.
+            hr.codey-sep
+            p.titles
+              | Java developer - NLP practitioner - Open source enthusiast
+          div.col-lg-4.text-center
+            img#img-me(src="http://placehold.it/220x220?text=Me!", alt="picture of Nate Glenn")
+      section.clearfix#portfolio
+        a#portfolio-anchor.anchor
+        h2 Portfolio
+        hr.codey-sep
+        div.row.text-center
+          div.col-lg-10.col-lg-offset-1
+            div.row
+              div.col-lg-6.left-col
+                img.img.img-responsive(src="http://placehold.it/420x275?text=Project", alt="picture of project")
+              div.col-lg-6.right-col
+                img.img.img-responsive(src="http://placehold.it/420x275?text=Project", alt="picture of project")
+              div.col-lg-6.left-col
+                img.img.img-responsive(src="http://placehold.it/420x275?text=Project", alt="picture of project")
+              div.col-lg-6.right-col
+                img.img.img-responsive(src="http://placehold.it/420x275?text=Project", alt="picture of project")
+              div.col-lg-6.left-col
+                img.img.img-responsive(src="http://placehold.it/420x275?text=Project", alt="picture of project")
+              div.col-lg-6.right-col
+                img.img.img-responsive(src="http://placehold.it/420x275?text=Project", alt="picture of project")
+      section.clearfix#contact
+        a#contact-anchor.anchor
+        h2 Contact Me
+        hr.codey-sep
+        div.row
+          div.col-lg-5.col-lg-push-6#contact-msg
+            p.
+              Want to contact me? Use this handy-dandy form! Tell me about a cool project you're working on, invite me to work for money, or just give me money. Anything's good, really.
+            p#note.
+              Note: no soliciting or recruiters, por favor!
+          div.col-lg-5.col-lg-pull-4
+            form#contact-form
+              div.form-group
+                label(for="name",required="required") Name
+                input#name.form-item(type="text",placeholder="Jane/John Doe")
+              div.form-group
+                label(for="email") Email address
+                input#email.form-item(type="email",placeholder="you@xyz.com")
+              div.form-group
+                label(for="phNum") Phone Number
+                input#phNum.form-item(type="tel",placeholder="Phone Number")
+              div.form-group
+                label(for="message") Message
+                textarea#message.form-item(rows=5,placeholder="Message",required="required")
+              button.btn.btn-default#submit(type="submit") Submit
+  footer
+    div#upper-footer
+      div.container
+        div.row
+          div.col-lg-3.col-lg-offset-2.text-center
+            h2 About this page
+            p
+              | Made with
+              = ' '
+              i.fa.fa-heart
+              = ' '
+              | and
+              = ' '
+              i.fa.fa-birthday-cake
+              = ' '
+              | by
+              = ' '
+              a(href="#") Nate Glenn
+              | .
+          div.col-lg-3.col-lg-offset-2.text-center
+            h2 Around the web
+              ul.social-list
+                li: a.btn.btn-default.btn-circle.btn-lg(href="https://github.com/garfieldnate",target="_blank")
+                  i.fa.fa-github(aria-hidden="true",target="_blank")
+                li: a.btn.btn-default.btn-circle.btn-lg(href="https://plus.google.com/u/0/+NathanGlenn1",target="_blank")
+                  i.fa.fa-google-plus(aria-hidden="true")
+                li: a.btn.btn-default.btn-circle.btn-lg(href="skype:garfieldnate?userinfo")
+                  i.fa.fa-skype(aria-hidden="true")
+                li: a.btn.btn-default.btn-circle.btn-lg(href="https://www.linkedin.com/in/nathanglenn",target="_blank")
+                  i.fa.fa-linkedin(aria-hidden="true")
+    div#lower-footer.text-center
+      div.container
+      p Nate Glenn
+        = ' '
+        i.fa.fa-copyright
+        = ' '
+        | 2016. All rights reversed.

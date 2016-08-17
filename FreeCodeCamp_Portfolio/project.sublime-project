@@ -1,0 +1,14 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+    "build_systems": [
+        {
+            "name": "Compile Jade",
+            "shell_cmd": "pug index.jade"
+        }
+    ]
+}
