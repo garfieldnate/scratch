@@ -115,9 +115,9 @@ section .codey-sep {
 
 @media(max-width: $bs-lg - 1) {
   #portfolio img {
-    max-width: 100%;
+    max-width: 90%;
     height: auto;
-    display: block;
+    display: inline-block;
   }
 }
 
@@ -175,6 +175,18 @@ section .codey-sep {
 .social-list {
   li {
     display: inline;
+    a {
+      position: relative;
+      // center these icons exactly in the circle button
+      .fa {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 100%;
+        padding: inherit;
+      }
+    }
   }
   padding: 0px;
 }
