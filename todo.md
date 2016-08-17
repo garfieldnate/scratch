@@ -1,4 +1,4 @@
 #TODO
 
-* Social button text isn't quite centered
+* Add scroll animation; would require removing Bootstrap's scrollspy
 
