@@ -9,6 +9,7 @@ script(src="https://code.jquery.com/jquery-2.2.4.min.js")
 script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous")
 link(rel="stylesheet",href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
 link(rel="stylesheet",href="css/style.css")
+
 body(data-spy="scroll", data-target="#nav-contents")
   a#about-anchor.anchor
   div.container
@@ -82,7 +83,7 @@ body(data-spy="scroll", data-target="#nav-contents")
               div.form-group
                 label(for="message") Message
                 textarea#message.form-item(rows=5,placeholder="Message",required="required")
-              button.btn.btn-default(type="submit") Submit
+              button.btn.btn-default#submit(type="submit") Submit
   footer
     div#upper-footer
       div.container

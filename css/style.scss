@@ -15,6 +15,7 @@ $header-footer-color: $dark-orange;
 $container-size: 1024px;
 $bs-lg: 1200px;
 $bs-sm: 480px;
+$navbar-width: 50px;
 
 @mixin container($bg-color, $text-color) {
     background-color: $bg-color;
@@ -26,17 +27,18 @@ $bs-sm: 480px;
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0px 0px 1px 1px rgba(0,0,0,.2);
+    padding: 0px 1em 0px 1em;
 }
 
 body {
     background-color: $body-color;
     /* Space for the navbar */
-    padding-top: 50px;
+    padding-top: $navbar-width;
 }
 
 // fix titles of anchored sections being hidden by the navbar
 .anchor {
-  top: -50px;
+  top: $navbar-width;
   display: block;
   position: relative;
   visibility: hidden;
@@ -52,9 +54,9 @@ header {
     // background-color: $head-foot-color;
     padding-top: 1em;
 
-    p {
-        margin-left: 1em;
-    }
+    // p {
+    //     margin-left: 1em;
+    // }
 }
 
 .intro {
@@ -153,13 +155,6 @@ section .codey-sep {
   }
 }
 
-@media(max-width: $bs-sm) {
-  #contact-msg {
-    margin-left: .5em;
-    margin-right: .5em;
-  }
-}
-
 #contact-form {
   font-size: 30px;
   label {
@@ -181,6 +176,10 @@ section .codey-sep {
   .form-group:not(:last-child) {
     margin-bottom: 2em;
   }
+}
+
+#submit {
+  margin-bottom: 2em;
 }
 
 #upper-footer {
