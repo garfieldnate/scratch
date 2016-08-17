@@ -1,7 +1,17 @@
-$body-color: #888;
-$head-foot-color: #aaa;
-$section-color: #eee;
-$icon-size: 0.8em;
+// Primary and secondary colors are orange and gray
+$light-gray: #888;
+$body-color: $light-gray;
+$head-foot-color: $body-color + #222;
+$section-color: $body-color + #666;
+
+$dark-orange: #e57200;
+$darker-orange-1: #cc6500;
+$darker-orange-2: #994c00;
+$darker-orange-3: #7f3f00;
+$lighter-orange: #ff9832;
+
+$header-footer-color: $dark-orange;
+
 $container-size: 1024px;
 $bs-lg: 1200px;
 
@@ -65,6 +75,7 @@ section {
     @include container($section-color, $body-color);
 }
 
+$icon-size: 0.8em;
 .codey-sep {
     border: none;
     height: 5px;
@@ -192,7 +203,55 @@ section .codey-sep {
 }
 
 #lower-footer {
-  color: white;
   padding-top: 1em;
   font-size: 20px;
+  box-shadow: 0px 0px 1px 1px rgba(0,0,0,.2);
+  height: 100%;
+}
+
+// Everything below is really bad; the proper solution is to customize
+// Bootstrap. Instead I override a bunch of styles to get the colors I want.
+
+#navbar,#lower-footer,.navbar-default .navbar-brand {
+  color: white;
+  background-color: $header-footer-color !important;
+}
+
+#navbar {
+  border-color: $darker-orange-1;
+}
+
+.navbar-nav>.active>a {
+  background-color: $lighter-orange !important;
+  color: black !important;
+}
+
+.navbar-nav>li>a {
+  color: white !important;
+}
+
+.navbar-brand:hover {
+  color: black !important;
+  background-color: $lighter-orange !important;
+}
+
+.navbar-default .navbar-toggle {
+  border-color: white !important;
+  &:hover {
+    border-color: $lighter-orange !important;
+    background-color: $lighter-orange;
+    .icon-bar {
+      background-color: black;
+    }
+  }
+  .icon-bar {
+    background-color: white;
+  }
+}
+
+a {
+  color: $darker-orange-2;
+  &:hover,&:visited {
+    color: $darker-orange-3;
+  }
 }

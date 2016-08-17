@@ -12,7 +12,7 @@ link(rel="stylesheet",href="css/style.css")
 body(data-spy="scroll", data-target="#nav-contents")
   a#about-anchor.anchor
   div.container
-    nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
+    nav.navbar.navbar-default.navbar-fixed-top#navbar(role='navigation')
       div.container-fluid
         div.navbar-header
           a.navbar-brand(href='#') Nate Glenn
@@ -24,11 +24,11 @@ body(data-spy="scroll", data-target="#nav-contents")
         div#nav-contents.collapse.navbar-collapse.navbar-right
           ul.nav.navbar-nav.nav-pills
             li
-              a(href='#about-anchor') About
+              a(href='#about-anchor'): b About
             li
-              a(href='#portfolio-anchor') Portfolio
+              a(href='#portfolio-anchor'): b Portfolio
             li
-              a(href="#contact-anchor") Contact
+              a(href="#contact-anchor"): b Contact
     main
       header.clearfix#about
         div.row
