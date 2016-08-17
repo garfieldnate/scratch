@@ -213,7 +213,7 @@ section .codey-sep {
 // Bootstrap. Instead I override a bunch of styles to get the colors I want.
 
 #navbar,#lower-footer,.navbar-default .navbar-brand {
-  color: white;
+  color: white !important;
   background-color: $header-footer-color !important;
 }
 
