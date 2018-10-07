@@ -1,0 +1,21 @@
+{
+  "name": "stock_photo_picker",
+  "version": "0.0.1",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "//": "see https://stackoverflow.com/a/49582729/474819",
+    "rebuild": "electron-rebuild -f -w sqlite3"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.8.2"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "electron": "^3.0.1",
+    "puppeteer": "^1.8.0",
+    "sequelize": "^4.39.0",
+    "sqlite3": "^4.0.2",
+    "then-request": "^6.0.0"
+  }
+}

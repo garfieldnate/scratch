@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Vocab Completer</title>
+    </head>
+    <body>
+      <h1>Vocab Completer</h1>
+      <h2 id="vocab-header">...</h2>
+      <h3 id="vocab-pronunciation">...</h2>
+      <div id="vocab-content">
+        <div id="vocab-images"></div>
+        <div id="vocab-audio"></div>
+        <div id="vocab-image-manual"></div>
+        <div id="vocab-image-downloaded"></div>
+        <div id="save-notifier"></div>
+      </div>
+      <div id="next"><p style="text-align: center">NEXT</p></div>
+    </body>
+    <script type="text/javascript">
+      const renderer = require('./renderer');
+      renderer.run('./vocab.db');
+    </script>
+    <style type="text/css">
+      .selector-square {
+        float: left;
+        width: 20px;
+        height: 20px;
+        margin: 5px;
+        border: 1px solid rgba(0, 0, 0, .2);
+        background: green;
+      }
+      #next {
+        float: center;
+        margin: 5px;
+        border: 1px solid rgba(0, 0, 0, .2);
+        background: YellowGreen;
+      }
+    </style>
+  </html>
