@@ -10,9 +10,11 @@
       <h3 id="vocab-pronunciation">...</h2>
       <div id="vocab-content">
         <div id="vocab-images"></div>
-        <div id="vocab-audio"></div>
+        <div><input type="text" id="more-images-query"><button type="button" id="more-images-loader">More Images</button></div>
+        <div id="vocab-images-google"></div>
         <div id="vocab-image-manual"></div>
         <div id="vocab-image-downloaded"></div>
+        <div id="vocab-audio"></div>
         <div id="save-notifier"></div>
       </div>
       <div id="next"><p style="text-align: center">NEXT</p></div>
@@ -30,11 +32,24 @@
         border: 1px solid rgba(0, 0, 0, .2);
         background: green;
       }
+      /* making clicking it obvious */
+      /* TODO: probably means I should be using a proper button */
+      .selector-square:active {
+        border: 2px solid black;
+      }
       #next {
         float: center;
         margin: 5px;
         border: 1px solid rgba(0, 0, 0, .2);
         background: YellowGreen;
+      }
+      img {
+          width:100%;
+          max-width:300px;
+      }
+      /* Make clicking it obvious */
+      img:active {
+        border: 2px solid black;
       }
     </style>
   </html>

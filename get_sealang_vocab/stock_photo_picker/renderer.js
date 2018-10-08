@@ -11,10 +11,24 @@ var state = {
 const resetPage = (vocab) => {
     document.getElementById("vocab-header").innerHTML = `${vocab.definition} (${vocab.headword})`;
     document.getElementById("vocab-pronunciation").innerHTML = vocab.pronunciation;
-    document.getElementById("vocab-images").innerHTML = '<p>fetching images...</p>';
+    document.getElementById("vocab-images").innerHTML = '';
     document.getElementById("vocab-audio").innerHTML = '<p>fetching audio...</p>';
+    document.getElementById("vocab-images-google").innerHTML = '';
     document.getElementById("vocab-image-downloaded").innerHTML = '';
     document.getElementById("save-notifier").innerHTML = '';
+}
+
+const setMoreImagesListener = (vocab) => {
+    document.getElementById("more-images-loader").onclick = async () => {
+        var query = document.getElementById("more-images-query").value;
+        if(!query) {
+            query = vocab.headword;
+        }
+        var imageUrls = await utils.scrapeGoogleImageUrls(query);
+        // 100 is way too many
+        imageUrls.length = Math.min(imageUrls.length, 20);
+        downloadAndDisplayImages(imageUrls, vocab, document.getElementById("vocab-images-google"));
+    }
 }
 
 const stripDatatypeFromBase64MimeString = (base64data) => {
@@ -27,8 +41,9 @@ const imageSelected = async (vocab, url, base64data) => {
     document.getElementById("save-notifier").innerHTML += '<p>Image saved to DB!';
 }
 
-const downloadAndDisplayImages = async (imageUrls, vocab) => {
-    const container = document.getElementById("vocab-images");
+const downloadAndDisplayImages = async (imageUrls, vocab, container) => {
+    container.innerHTML = '<p>fetching images...</p>';
+    console.log("should have reset");
     await Promise.all(
         imageUrls.map(url => {
             return utils.downloadUrlAsBase64(url).then(base64data => {
@@ -98,10 +113,11 @@ const displayPage = async (vocab) => {
     resetPage(vocab);
     console.log(vocab.toJSON());
     displayManualImageInput(vocab);
+    setMoreImagesListener(vocab);
     // remove parentheticals from definition to simplify query
     var query = vocab.definition.replace(/ *\(.*/g, "");
     const imageUrls = await utils.scrapeImageUrls(state.page, query);
-    await downloadAndDisplayImages(imageUrls, vocab);
+    await downloadAndDisplayImages(imageUrls, vocab, document.getElementById("vocab-images"));
     const audioUrls = await utils.scrapeAudioUrls(vocab.headword);
     await downloadAndDisplayAudio(audioUrls, vocab);
 }

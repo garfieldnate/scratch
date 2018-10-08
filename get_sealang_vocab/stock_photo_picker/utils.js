@@ -21,6 +21,23 @@ const scrapeImageUrls = async (page, query) => {
     }, pexelUrl);
 }
 
+// searches for images with permissive license
+const googleImageUrl = "https://www.google.co.in/search?&source=lnms&tbm=isch&tbs=sur%3Afc&q="
+const scrapeGoogleImageUrls = async (query) => {
+    const url = googleImageUrl + encodeURIComponent(query);
+    const res = await fetch(url, {
+        headers: {
+            'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36"
+        }
+    });
+    const body = await res.text();
+    const $ = cheerio.load(body);
+    return $('div.rg_meta').map((i, el) => {
+        const rg_meta = JSON.parse($(el).text());
+        return rg_meta["ou"];
+    }).get();
+}
+
 const forvoSearchUrl = 'https://forvo.com/word/'
 const forvoAudioUrl = 'http://audio.forvo.com/mp3/'
 //TODO: catch errors, return []
@@ -81,6 +98,7 @@ if (!module.parent) {
     module.exports = {
         openBrowser: openBrowser,
         scrapeImageUrls: scrapeImageUrls,
+        scrapeGoogleImageUrls: scrapeGoogleImageUrls,
         scrapeAudioUrls: scrapeAudioUrls,
         downloadUrlAsBase64: downloadUrlAsBase64,
         sleep: sleep,
