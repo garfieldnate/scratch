@@ -13,5 +13,4 @@ Scripts for downloading vocab from sealang and inserting them in a sqlite DB. Ve
 
 * pre-load the next screen while the user is editing the current screen
 * finish manually creating the full deck
-* use buttons instead of stupid green squares (what was I thinking?!)
 * possibly download more license-required info into the notes sections 
