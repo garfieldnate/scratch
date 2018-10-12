@@ -6,6 +6,8 @@ var state = {
     currentlySelected: 0,
     allVocab: [],
     page: null,
+    // TODO
+    nextStateData: {}
 };
 
 const resetPage = (vocab) => {
@@ -17,6 +19,56 @@ const resetPage = (vocab) => {
     document.getElementById("vocab-image-downloaded").innerHTML = '';
     document.getElementById("save-notifier").innerHTML = '';
     document.getElementById("more-images-query").value = '';
+}
+
+const constructImageQuery = (vocab) => {
+    // remove parentheticals from definition to simplify query
+    var query = vocab.definition.replace(/ *\(.*/g, "");
+    // remove leading meaningless words (gets better results)
+    query = query.replace(/^to /,"");
+    query = query.replace(/^the /,"");
+    query = query.replace(/^a /,"");
+    return query;
+}
+
+// get from pexels if possible, else google images
+const getImagesFromPexelsWithFallback = async query => {
+    return await utils.scrapeImageUrls(state.page, query).then(async imageUrls => {
+        if(imageUrls.length === 0) {
+            imageUrls = await utils.scrapeGoogleImageUrls(state.nextStateData.vocab.headword);
+            // 100 is way too many
+            imageUrls.length = Math.min(imageUrls.length, 30);
+            return imageUrls;
+        } else {
+            return imageUrls;
+        }
+    });
+}
+
+// next: store basd64 data in nextStateData
+const loadResourcesForNextPage = async () => {
+    if(state.currentlySelected === state.allVocab.length) {
+        console.log("Finished editing vocab data");
+        // will error at the end but who cares
+        state.nextStateData = {};
+    }
+
+    const vocab = state.allVocab[state.currentlySelected + 1];
+    state.nextStateData.vocab = vocab;
+
+    const query = constructImageQuery(vocab);
+    console.log(`querying Pexels for ${query}`);
+    var imageUrls = await getImagesFromPexelsWithFallback(query);
+    state.nextStateData.images = Promise.all(
+        imageUrls.map(url => {
+            return utils.downloadUrlAsBase64(url).then(base64data => {
+                return {url: url, base64data: base64data};
+            })
+        })
+    );
+    console.log(state.nextStateData.images);
+
+    state.nextStateData.audioUrls = utils.scrapeAudioUrls(vocab.headword)
 }
 
 const setMoreImagesListener = (vocab) => {
@@ -48,6 +100,17 @@ const imageSelected = async (vocab, url, base64data) => {
     // console.log("clicked " + url);
     await vocab.updateAttributes({image_url: url, image_base64: stripDatatypeFromBase64MimeString(base64data)});
     document.getElementById("save-notifier").innerHTML += '<p>Image saved to DB!';
+}
+
+const displayImages = (vocab, container, images) => {
+    container.innerHTML = '<p>fetching images...</p>';
+    images.forEach(image => {
+        var img = document.createElement('img');
+        img.src = image.base64data;
+        img.setAttribute("data-original-src", image.url);
+        img.onclick = async () => {await imageSelected(vocab, image.url, image.base64data);}
+        container.appendChild(img);
+    });
 }
 
 const downloadAndDisplayImages = async (imageUrls, vocab, container) => {
@@ -129,27 +192,23 @@ const displayManualImageInput = vocab => {
     });
 }
 
-const displayPage = async (vocab) => {
+const displayPage = async () => {
+    const vocab = state.nextStateData.vocab;
     resetPage(vocab);
     // console.log(vocab.toJSON());
     displayManualImageInput(vocab);
     setMoreImagesListener(vocab);
-    // remove parentheticals from definition to simplify query
-    var query = vocab.definition.replace(/ *\(.*/g, "");
-    // remove leading meaningless words (gets better results)
-    query = query.replace(/^to /,"");
-    query = query.replace(/^the /,"");
-    query = query.replace(/^a /,"");
-    console.log(`querying Pexels for ${query}`);
-    const imageUrls = await utils.scrapeImageUrls(state.page, query);
-    // display Pexels images if found; Google images otherwise
-    if(imageUrls.length !== 0) {
-        await downloadAndDisplayImages(imageUrls, vocab, document.getElementById("vocab-images"));
-    } else {
-        document.getElementById("more-images-loader").onclick();
-    }
-    const audioUrls = await utils.scrapeAudioUrls(vocab.headword);
+    const images = await state.nextStateData.images;
+    console.log(images);
+    displayImages(vocab, document.getElementById("vocab-images"), images);
+    const audioUrls = await state.nextStateData.audioUrls;
     await downloadAndDisplayAudio(audioUrls, vocab);
+}
+
+const goToNextVocab = async () => {
+    state.currentlySelected++;
+    await displayPage();
+    loadResourcesForNextPage();
 }
 
 const run = async (dbFile) => {
@@ -157,15 +216,11 @@ const run = async (dbFile) => {
     const browser = await utils.openBrowser();
     state.page = await browser.newPage();
     state.allVocab = (await vocabModel.all()).filter(v => v.image_url === null); // || v.audio_url === null
-    state.currentlySelected = 0;
-    document.getElementById('next').onclick = () => {
-        state.currentlySelected++;
-        if (state.currentlySelected !== state.allVocab.length) {
-            const vocab = state.allVocab[state.currentlySelected];
-            displayPage(vocab);
-        }
-    }
-    displayPage(state.allVocab[state.currentlySelected]);
+
+    document.getElementById('next').onclick = () => goToNextVocab();
+    state.currentlySelected = -1;
+    await loadResourcesForNextPage();
+    goToNextVocab();
 }
 
 module.exports = {
