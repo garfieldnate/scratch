@@ -73,15 +73,16 @@ const loadResourcesForNextPage = async () => {
 
 const setMoreImagesListener = (vocab) => {
     const button = document.getElementById("more-images-loader");
-    button.onclick = async () => {
+    button.onclick = () => {
         var query = document.getElementById("more-images-query").value;
         if(!query) {
             query = vocab.headword;
         }
-        var imageUrls = await utils.scrapeGoogleImageUrls(query);
-        // 100 is way too many
-        imageUrls.length = Math.min(imageUrls.length, 20);
-        downloadAndDisplayImages(imageUrls, vocab, document.getElementById("vocab-images-google"));
+        utils.scrapeGoogleImageUrls(query).then(imageUrls => {
+            // 100 is way too many
+            imageUrls.length = Math.min(imageUrls.length, 20);
+            downloadAndDisplayImages(imageUrls, vocab, document.getElementById("vocab-images-google"));
+       });
     }
     // press enter to search
     document.getElementById("more-images-query").addEventListener("keyup", function(event) {
@@ -102,8 +103,9 @@ const imageSelected = async (vocab, url, base64data) => {
     document.getElementById("save-notifier").innerHTML += '<p>Image saved to DB!';
 }
 
-const displayImages = (vocab, container, images) => {
+const displayImages= (vocab, container, images) => {
     container.innerHTML = '<p>fetching images...</p>';
+    console.log(images);
     images.forEach(image => {
         var img = document.createElement('img');
         img.src = image.base64data;
@@ -198,11 +200,10 @@ const displayPage = async () => {
     // console.log(vocab.toJSON());
     displayManualImageInput(vocab);
     setMoreImagesListener(vocab);
-    const images = await state.nextStateData.images;
-    console.log(images);
-    displayImages(vocab, document.getElementById("vocab-images"), images);
+    displayImages(vocab, document.getElementById("vocab-images"), await state.nextStateData.images);
     const audioUrls = await state.nextStateData.audioUrls;
     await downloadAndDisplayAudio(audioUrls, vocab);
+    window.scrollTo(0,0);
 }
 
 const goToNextVocab = async () => {

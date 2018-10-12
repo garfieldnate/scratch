@@ -62,6 +62,7 @@ const scrapeAudioUrls = async (query) => {
 }
 
 const downloadUrlAsBase64 = async (url) => {
+    console.log("downloading to base64: " + url);
     const response = await fetch(url);
     const imageBytes = await response.arrayBuffer();
     const dataString = "data:" + response.headers.get("content-type") + ";base64," + new Buffer(imageBytes).toString('base64');
