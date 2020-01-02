@@ -96,6 +96,7 @@ def split_cols(lines, index):
 def output_new_lines(lines):
     print('<!DOCTYPE html>')
     print('<head><meta charset="utf-8"></head>')
+    print('<style>body { font-size: 60pt; }</style>')
     in_entry = False
     for line in lines:
         if not line:
@@ -114,7 +115,7 @@ def output_new_lines(lines):
             output_frequency_score(match)
         else:
             print('<br/>')
-            print(line)
+            print(f'<h2>{line}</h2>')
     print("</div>")
 
 def output_headword(match):
