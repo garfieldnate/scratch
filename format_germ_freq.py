@@ -96,10 +96,15 @@ def split_cols(lines, index):
 def output_new_lines(lines):
     print('<!DOCTYPE html>')
     print('<head><meta charset="utf-8"></head>')
+    in_entry = False
     for line in lines:
         if not line:
             continue
         if (match := headword_pattern.match(line)):
+            if in_entry:
+                print("</div>")
+            in_entry = True
+            print("<div class='entry'>")
             output_headword(match)
         elif (match := polysemous_headword_pattern.match(line)):
             output_single_meaning(match)
@@ -110,6 +115,7 @@ def output_new_lines(lines):
         else:
             print('<br/>')
             print(line)
+    print("</div>")
 
 def output_headword(match):
     print(NEXT_SCREEN)
@@ -117,7 +123,7 @@ def output_headword(match):
     if(pos := match.group('pos')):
         # plenty of space so we can quiz ourselves before scrolling down
         print(NEXT_SCREEN)
-        print('<h2>' + get_pos_html(pos) + '<span class="meaning">' + match.group('meaning') + '</span>' + '</h2>')
+        print('<h1>' + get_pos_html(pos) + '<span class="meaning">' + match.group('meaning') + '</span>' + '</h1>')
 
 
 def get_pos_html(pos):
@@ -130,11 +136,11 @@ def get_pos_html(pos):
 def output_single_meaning(match):
     print(NEXT_SCREEN)
 
-    print('<h2>' + '<span class="index">' + match.group('index') + '</span> ' + get_pos_html(match.group('pos')) + '<span class="meaning">' + match.group('meaning') + '</span>' + '</h2>')
+    print('<h1>' + '<span class="index">' + match.group('index') + '</span> ' + get_pos_html(match.group('pos')) + '<span class="meaning">' + match.group('meaning') + '</span>' + '</h1>')
 
 
 def output_secondary_meaning(match):
-    print('<h2>' + '<span class="meaning">' + match.group(0) + '</span>' + '</h2>')
+    print('<h1>' + '<span class="meaning">' + match.group(0) + '</span>' + '</h1>')
 
 
 def output_frequency_score(match):
