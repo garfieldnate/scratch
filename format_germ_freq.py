@@ -16,6 +16,7 @@ headword_pattern = re.compile(f"^(?P<rank>\\d+) (?P<headword>.+?)(?: (?P<pos>{'|
 polysemous_headword_pattern = re.compile(f"^\\s+(?P<index>\\d+) (?P<pos>{'|'.join(POS)}) (?P<meaning>.+)$")
 secondary_meaning_pattern = re.compile(f"^\\s+[a-z]\\).+$")
 frequency_score_pattern = re.compile(f"^\\s+(?P<score>[0-9,]+)$")
+contraction_pattern = re.compile(f'^\\s+(?P<contraction>\\w+) (?P<meaning>.+)')
 # print(headword_pattern)
 
 GENRE = ["A", "I", "L", "N", "S"]
@@ -107,9 +108,13 @@ def output_new_lines(lines):
     print('<head><meta charset="utf-8"></head>')
     print('<style>body { font-size: 60pt; }</style>')
     in_entry = False
+    saw_frequency_score = False
     close_prev = ''
     for line in lines:
         if not line:
+            if close_prev:
+                print(close_prev)
+                close_prev = ''
             continue
         if (match := headword_pattern.match(line)):
             if close_prev:
@@ -119,6 +124,7 @@ def output_new_lines(lines):
                 print("</div>")
             print(NEXT_SCREEN)
             in_entry = True
+            saw_frequency_score = False
             print("<div class='entry'>")
             close_prev = output_headword(match)
         elif (match := polysemous_headword_pattern.match(line)):
@@ -130,17 +136,24 @@ def output_new_lines(lines):
             if close_prev:
                 print(close_prev)
                 close_prev = ''
-            output_secondary_meaning(match)
+            close_prev = output_secondary_meaning(match)
         elif (match := frequency_score_pattern.match(line)):
             if close_prev:
                 print(close_prev)
                 close_prev = ''
             output_frequency_score(match)
+            saw_frequency_score = True
         elif line.lstrip()[0] == "•":
             if close_prev:
                 print(close_prev)
                 close_prev = ''
             close_prev = output_example(line.lstrip())
+        elif saw_frequency_score and contraction_pattern.match(line):
+            if close_prev:
+                print(close_prev)
+                close_prev = ''
+            saw_frequency_score = False
+            close_prev = output_contraction_header(contraction_pattern.match(line))
         else:
             print(line.lstrip())
     print(close_prev)
@@ -184,6 +197,10 @@ def output_frequency_score(match):
 def output_example(line):
     print(f'<br/><span class="example">{line}')
     return '</span>'
+
+def output_contraction_header(match):
+    print(f'<br/><h1><span class="contraction">{match.group("contraction")}</span> <span class="meaning">{match.group("meaning")}')
+    return '</span></h1>'
 
 def main(argv):
     if len(argv) != 2:
