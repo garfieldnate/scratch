@@ -103,6 +103,7 @@ def split_cols(lines, index):
 
 
 # TODO: This is pretty silly. If further work is needed, just parse out the entries properly and then print the HTML in a separate step.
+# TODO: there should be 4034 entries, but we are only printing 4011 div elements
 def output_new_lines(lines):
     print('<!DOCTYPE html>')
     print('<head><meta charset="utf-8"></head>')
