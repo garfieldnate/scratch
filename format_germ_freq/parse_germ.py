@@ -1,7 +1,7 @@
 from collections import namedtuple
 import sys
 
-from pyparsing import alphas, Word, nums, oneOf, SkipTo, Combine, tokenMap, Suppress, Literal, Optional, delimitedList, restOfLine, ZeroOrMore, ParseResults
+from pyparsing import alphas, Word, nums, oneOf, SkipTo, Combine, tokenMap, Suppress, Literal, Optional, delimitedList, restOfLine, ZeroOrMore, ParseResults, OneOrMore
 
 # Node = namedtuple("Node", ["value", "children"])
 # def buildTree(string, location, tokens):
@@ -31,12 +31,19 @@ from pyparsing import alphas, Word, nums, oneOf, SkipTo, Combine, tokenMap, Supp
 
 rank = Word(nums)('rank')#.setParseAction(buildTree)
 pos = oneOf("adj adv art aux conj inf interj num part prep pron verb der die das", asKeyword=True)('pos')#.setParseAction(buildTree)
-headword = SkipTo(pos)('headword')#.setParseAction(buildTree)
+unified_headword = SkipTo(pos, failOn=Word(nums))('unified_headword')#.setParseAction(buildTree)
 english = SkipTo('\n')('english')#.setParseAction(buildTree)
-header = (rank + headword + pos + english)#.setParseAction(buildTree)
+unified_header = (rank + unified_headword + pos + english)#.setParseAction(buildTree)
+
 bullet = Suppress(Word("•"))#.setParseAction(buildTree)
-bullet_text =( bullet + SkipTo(Word(nums))('example'))#.setParseAction(buildTree)
-score = Word(nums)('score')#.setParseAction(buildTree)
+bullet_text =(bullet + SkipTo(Word(nums) | bullet)('example'))#.setParseAction(buildTree)
+score = Word(nums)('score').setDebug()#.setParseAction(buildTree)
+
+subheader_number = Word(nums, max=1)
+# TODO: parse out English, German and POS if possible
+numbered_subheader = subheader_number + restOfLine + Suppress(SkipTo(bullet))
+partial_headword = SkipTo(subheader_number)
+partial_header = (rank + partial_headword)
 
 genre = oneOf("A I L N S", asKeyword=True)('genre')#.setParseAction(buildTree)
 common = (Literal('+')('common') + genre)#.setParseAction(buildTree)
@@ -49,10 +56,10 @@ subheader = (Combine(Word(alphas) + restOfLine) + Suppress(SkipTo(bullet)))#.set
 
 content = (bullet_text + score + Optional(usage))('content')#.setParseAction(buildTree)
 
-entry = (header + content + ZeroOrMore(subheader + content))#.setParseAction(buildTree)
+entry = ((unified_header + content + ZeroOrMore(subheader + content)) | (partial_header + OneOrMore(numbered_subheader + bullet_text) + score))#.setDebug()#.setParseAction(buildTree)
 
 # strip extra whitespace stored in the SkipTo tokens
-for el in [headword, english, bullet_text]:
+for el in [unified_headword, english, bullet_text]:
     el.setParseAction(tokenMap(str.strip))
 
 samples = []
@@ -77,6 +84,36 @@ samples.append("""123 heißen verb to be called
       das heißt, ich habe keine Zeit.
        285""")
 
+samples.append("""574 enthalten
+
+    1 verb to contain
+    • Die Creme enthält keine
+      Konservierungsstoffe.
+    2 enthalten (sich) to abstain
+    • Ich enthalte mich der Stimme.
+
+          148""")
+
+samples.append("""589 pro
+    1 prep per
+    • Wir trinken pro Woche etwa einen Kasten
+      Bier.
+    2 Pro das pro
+    • Pro und Contra sollte man gewissenhaft
+      abwägen.
+       145""")
+
+# 2302 ausziehen verb a) to move out, take off
+#         (clothes)
+#       • Nasse Strümpfe sollte man ausziehen, damit
+#         man sich nicht erkältet.
+#         b) ausziehen (sich) to undress, get
+#         undressed
+
+#       • Die Kinder ziehen sich vor dem
+#         Mittagsschlaf aus.
+#         34
+
 # def pprint(node, tab=""):
 #     print(node)
     # print(f"node is {node[0]}, value is {node.value}, children are {node.children}")
@@ -97,7 +134,6 @@ def parse_file(file):
         print(tree.dump())
         # print(type(tree.value))
         # pprint(tree[0])
-    # usage.parseString('–A, +S').pprint()
 
 
 def main(argv):
