@@ -1,7 +1,7 @@
 from collections import namedtuple
 import sys
 
-from pyparsing import alphas, Word, nums, oneOf, SkipTo, Combine, tokenMap, Suppress, Literal, Optional, delimitedList, restOfLine, ZeroOrMore, ParseResults, OneOrMore
+from pyparsing import alphas, Word, nums, oneOf, SkipTo, Combine, tokenMap, Suppress, Literal, Optional, delimitedList, restOfLine, ZeroOrMore, ParseResults, OneOrMore, LineEnd, NotAny
 
 # Node = namedtuple("Node", ["value", "children"])
 # def buildTree(string, location, tokens):
@@ -29,15 +29,18 @@ from pyparsing import alphas, Word, nums, oneOf, SkipTo, Combine, tokenMap, Supp
 
 
 
+bullet = Suppress(Word("•"))#.setParseAction(buildTree)
+bullet_text =(bullet + SkipTo(Word(nums) | bullet)('example'))#.setParseAction(buildTree)
+score = Word(nums)('score')# + NotAny(Word(alphas))#.setDebug()#.setParseAction(buildTree)
+
 rank = Word(nums)('rank')#.setParseAction(buildTree)
 pos = oneOf("adj adv art aux conj inf interj num part prep pron verb der die das", asKeyword=True)('pos')#.setParseAction(buildTree)
-unified_headword = SkipTo(pos, failOn=Word(nums))('unified_headword')#.setParseAction(buildTree)
+unified_headword = SkipTo(pos, failOn=Word(nums) | bullet)('unified_headword')#.setParseAction(buildTree)
 english = SkipTo('\n')('english')#.setParseAction(buildTree)
 unified_header = (rank + unified_headword + pos + english)#.setParseAction(buildTree)
 
-bullet = Suppress(Word("•"))#.setParseAction(buildTree)
-bullet_text =(bullet + SkipTo(Word(nums) | bullet)('example'))#.setParseAction(buildTree)
-score = Word(nums)('score').setDebug()#.setParseAction(buildTree)
+lettered_header = (rank + SkipTo(pos, failOn=Literal('(') | nums | bullet)('lettered_headword') + pos)
+lettered_subheader = Word('ab') + Literal(')') + restOfLine + Suppress(SkipTo(bullet))
 
 subheader_number = Word(nums, max=1)
 # TODO: parse out English, German and POS if possible
@@ -52,11 +55,16 @@ usage_el = (common | uncommon)('usage_el')#.setParseAction(buildTree)
 # TODO: output structure wrong
 usage = delimitedList(usage_el)('usage')#.setParseAction(buildTree)
 
-subheader = (Combine(Word(alphas) + restOfLine) + Suppress(SkipTo(bullet)))#.setParseAction(buildTree)
+subheader = (Combine(Word(alphas) + restOfLine) + Suppress(SkipTo(bullet)))#.setDebug()#.setParseAction(buildTree)
 
-content = (bullet_text + score + Optional(usage))('content')#.setParseAction(buildTree)
+content = (bullet_text + score + Optional(usage))('content')#.setDebug()#.setParseAction(buildTree)
 
-entry = ((unified_header + content + ZeroOrMore(subheader + content)) | (partial_header + OneOrMore(numbered_subheader + bullet_text) + score))#.setDebug()#.setParseAction(buildTree)
+lettered_bullet = (bullet + SkipTo(lettered_subheader | score))
+lettered_section = (lettered_subheader + lettered_bullet)('lettered_section')#.setDebug()
+
+entry = ((unified_header + content + ZeroOrMore(subheader + content)) | (partial_header + OneOrMore(numbered_subheader + OneOrMore(bullet_text + Optional(score) + ZeroOrMore(subheader + content)))) | (lettered_header + lettered_section + lettered_section + score))#.setDebug()#.setParseAction(buildTree)
+
+# entry = ((unified_header + content + ZeroOrMore(Optional(subheader) + content)) | (partial_header + OneOrMore(numbered_subheader + bullet_text) + score))#.setDebug()#.setParseAction(buildTree)
 
 # strip extra whitespace stored in the SkipTo tokens
 for el in [unified_headword, english, bullet_text]:
@@ -103,16 +111,26 @@ samples.append("""589 pro
       abwägen.
        145""")
 
-# 2302 ausziehen verb a) to move out, take off
-#         (clothes)
-#       • Nasse Strümpfe sollte man ausziehen, damit
-#         man sich nicht erkältet.
-#         b) ausziehen (sich) to undress, get
-#         undressed
+# Note: I moved (clothes) up a line because it seems to be the only place where the definition spans two lines
+samples.append("""2302 ausziehen verb a) to move out, take off (clothes)
+      • Nasse Strümpfe sollte man ausziehen, damit
+        man sich nicht erkältet.
+        b) ausziehen (sich) to undress, get
+        undressed
 
-#       • Die Kinder ziehen sich vor dem
-#         Mittagsschlaf aus.
-#         34
+      • Die Kinder ziehen sich vor dem
+        Mittagsschlaf aus.
+        34""")
+
+samples.append("""126 erst
+    1 adv ﬁrst, only, not until
+    • Erst die Arbeit, dann das Vergnügen.
+    2 part
+    • Da geht’s erst richtig los.
+       737
+    erst mal ﬁrst
+    • Darüber muss ich erst mal nachdenken.
+       123""")
 
 # def pprint(node, tab=""):
 #     print(node)
