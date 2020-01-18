@@ -3,34 +3,43 @@ import sys
 
 from pyparsing import alphas, Word, nums, oneOf, SkipTo, Combine, tokenMap, Suppress, Literal, Optional, delimitedList, restOfLine, ZeroOrMore, ParseResults, OneOrMore, LineEnd, NotAny
 
-# Node = namedtuple("Node", ["value", "children"])
-# def buildTree(string, location, tokens):
-#     return tokens
-    # node = {}
-    # for k,v in tokens.items():
-    #     # print(k,v)
-    #     if(type(v) == ParseResults):
-    #         node[k] = buildTree(None, None, v)
-    #     else:
-    #         node[k] = v
-    # print(node)
-    # return node
+def process_usage(string, location, parse_tree):
+    usage = {'genre': parse_tree['genre']}
+    if 'common' in parse_tree:
+        usage['occurence'] = 'common'
+    else:
+        usage['occurence'] = 'uncommon'
+    # print(f'Usage: returning {usage}')
+    return usage
 
-    # print(list(tokens.items()))
-    # print(tokens)
 
-    # if len(tokens) > 1:
-    #     return Node(value=tokens[0], children=tokens[1:])
-    # elif len(tokens) == 1:
-    #     return tokens[0]
-    # else:
-    #     return None
+def buildTree(string, location, parse_tree):
+    node = {}
+
+    # Must handle strings, lists and dicts; ParserResults objects have to be classified as dicts or lists
+
+    # strings
+    if isinstance(parse_tree, str):
+        # get rid of extra whitespace
+        return " ".join(parse_tree.split())
+
+    # lists
+    treat_as_list = isinstance(parse_tree, list) or \
+        (isinstance(parse_tree, ParseResults) and not parse_tree.haskeys())
+    if treat_as_list:
+        return [buildTree(None, None, t) for t in parse_tree]
+
+    # dicts
+    for k,v in parse_tree.items():
+        node[k] = buildTree(None, None, v)
+
+    return node
 
 
 
 
 bullet = Suppress(Word("•"))#.setParseAction(buildTree)
-bullet_text =(bullet + SkipTo(Word(nums) | bullet)('example'))#.setParseAction(buildTree)
+bullet_text = (bullet + SkipTo(Word(nums) | bullet)('example'))#.setParseAction(buildTree)
 score = Word(nums)('score')# + NotAny(Word(alphas))#.setDebug()#.setParseAction(buildTree)
 
 rank = Word(nums)('rank')#.setParseAction(buildTree)
@@ -49,22 +58,23 @@ partial_headword = SkipTo(subheader_number)
 partial_header = (rank + partial_headword)
 
 genre = oneOf("A I L N S", asKeyword=True)('genre')#.setParseAction(buildTree)
-common = (Literal('+')('common') + genre)#.setParseAction(buildTree)
-uncommon = (Literal('–')('uncommon') + genre)#.setParseAction(buildTree) # Note: not a '-' character!
-usage_el = (common | uncommon)('usage_el')#.setParseAction(buildTree)
+common = (Literal('+')('common') + genre).setParseAction(process_usage)
+uncommon = (Literal('–')('uncommon') + genre).setParseAction(process_usage) # Note: not a '-' character!
+usage_el = (common | uncommon)('usage')
 # TODO: output structure wrong
-usage = delimitedList(usage_el)('usage')#.setParseAction(buildTree)
+usage = delimitedList(usage_el).setParseAction(buildTree)
 
 subheader = (Combine(Word(alphas) + restOfLine) + Suppress(SkipTo(bullet)))#.setDebug()#.setParseAction(buildTree)
 
-content = (bullet_text + score + Optional(usage))('content')#.setDebug()#.setParseAction(buildTree)
+content = (bullet_text + score + Optional(usage))('content').setParseAction(buildTree)
 
 lettered_bullet = (bullet + SkipTo(lettered_subheader | score))
 lettered_section = (lettered_subheader + lettered_bullet)('lettered_section')#.setDebug()
 
-entry = ((unified_header + content + ZeroOrMore(subheader + content)) | (partial_header + OneOrMore(numbered_subheader + OneOrMore(bullet_text + Optional(score) + ZeroOrMore(subheader + content)))) | (lettered_header + lettered_section + lettered_section + score))#.setDebug()#.setParseAction(buildTree)
-
-# entry = ((unified_header + content + ZeroOrMore(Optional(subheader) + content)) | (partial_header + OneOrMore(numbered_subheader + bullet_text) + score))#.setDebug()#.setParseAction(buildTree)
+entry = ((unified_header + content + ZeroOrMore(subheader + content)) | 
+         (partial_header + OneOrMore(numbered_subheader + 
+                OneOrMore(bullet_text + Optional(score) + ZeroOrMore(subheader + content)))) | 
+         (lettered_header + lettered_section + lettered_section + score)).setParseAction(buildTree)
 
 # strip extra whitespace stored in the SkipTo tokens
 for el in [unified_headword, english, bullet_text]:
@@ -84,53 +94,53 @@ samples.append("""3111 Mörder der murderer
        gefunden werden.
         23 –A, –S""")
 
-samples.append("""123 heißen verb to be called
-    • Sie heißt Anja.
-       740
-    das heißt, d.h. that is, i.e.
-    • Morgen Nachmittag muss ich zum Arzt,
-      das heißt, ich habe keine Zeit.
-       285""")
+# samples.append("""123 heißen verb to be called
+#     • Sie heißt Anja.
+#        740
+#     das heißt, d.h. that is, i.e.
+#     • Morgen Nachmittag muss ich zum Arzt,
+#       das heißt, ich habe keine Zeit.
+#        285""")
 
-samples.append("""574 enthalten
+# samples.append("""574 enthalten
 
-    1 verb to contain
-    • Die Creme enthält keine
-      Konservierungsstoffe.
-    2 enthalten (sich) to abstain
-    • Ich enthalte mich der Stimme.
+#     1 verb to contain
+#     • Die Creme enthält keine
+#       Konservierungsstoffe.
+#     2 enthalten (sich) to abstain
+#     • Ich enthalte mich der Stimme.
 
-          148""")
+#           148""")
 
-samples.append("""589 pro
-    1 prep per
-    • Wir trinken pro Woche etwa einen Kasten
-      Bier.
-    2 Pro das pro
-    • Pro und Contra sollte man gewissenhaft
-      abwägen.
-       145""")
+# samples.append("""589 pro
+#     1 prep per
+#     • Wir trinken pro Woche etwa einen Kasten
+#       Bier.
+#     2 Pro das pro
+#     • Pro und Contra sollte man gewissenhaft
+#       abwägen.
+#        145""")
 
-# Note: I moved (clothes) up a line because it seems to be the only place where the definition spans two lines
-samples.append("""2302 ausziehen verb a) to move out, take off (clothes)
-      • Nasse Strümpfe sollte man ausziehen, damit
-        man sich nicht erkältet.
-        b) ausziehen (sich) to undress, get
-        undressed
+# # Note: I moved (clothes) up a line because it seems to be the only place where the definition spans two lines
+# samples.append("""2302 ausziehen verb a) to move out, take off (clothes)
+#       • Nasse Strümpfe sollte man ausziehen, damit
+#         man sich nicht erkältet.
+#         b) ausziehen (sich) to undress, get
+#         undressed
 
-      • Die Kinder ziehen sich vor dem
-        Mittagsschlaf aus.
-        34""")
+#       • Die Kinder ziehen sich vor dem
+#         Mittagsschlaf aus.
+#         34""")
 
-samples.append("""126 erst
-    1 adv ﬁrst, only, not until
-    • Erst die Arbeit, dann das Vergnügen.
-    2 part
-    • Da geht’s erst richtig los.
-       737
-    erst mal ﬁrst
-    • Darüber muss ich erst mal nachdenken.
-       123""")
+# samples.append("""126 erst
+#     1 adv ﬁrst, only, not until
+#     • Erst die Arbeit, dann das Vergnügen.
+#     2 part
+#     • Da geht’s erst richtig los.
+#        737
+#     erst mal ﬁrst
+#     • Darüber muss ich erst mal nachdenken.
+#        123""")
 
 # def pprint(node, tab=""):
 #     print(node)
@@ -149,7 +159,8 @@ def parse_file(file):
     # text = open(file).read()
     for sample in samples:
         tree = entry.parseString(sample, parseAll=True)
-        print(tree.dump())
+        # print(tree.dump())
+        print(tree)
         # print(type(tree.value))
         # pprint(tree[0])
 
