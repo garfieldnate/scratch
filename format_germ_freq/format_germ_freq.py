@@ -105,60 +105,66 @@ def split_cols(lines, index):
 # TODO: This is pretty silly. If further work is needed, just parse out the entries properly and then print the HTML in a separate step.
 # TODO: there should be 4034 entries, but we are only printing 4011 div elements
 def output_new_lines(lines):
-    print('<!DOCTYPE html>')
-    print('<head><meta charset="utf-8"></head>')
-    print('<style>body { font-size: 60pt; }</style>')
-    in_entry = False
-    saw_frequency_score = False
-    close_prev = ''
+    # print all non-empty lines as-is
     for line in lines:
-        if not line:
-            if close_prev:
-                print(close_prev)
-                close_prev = ''
-            continue
-        if (match := headword_pattern.match(line)):
-            if close_prev:
-                print(close_prev)
-                close_prev = ''
-            if in_entry:
-                print("</div>")
-            print(NEXT_SCREEN)
-            in_entry = True
-            saw_frequency_score = False
-            print("<div class='entry'>")
-            close_prev = output_headword(match)
-        elif (match := polysemous_headword_pattern.match(line)):
-            if close_prev:
-                print(close_prev)
-                close_prev = ''
-            close_prev = output_single_meaning(match)
-        elif (match := secondary_meaning_pattern.match(line)):
-            if close_prev:
-                print(close_prev)
-                close_prev = ''
-            close_prev = output_secondary_meaning(match)
-        elif (match := frequency_score_pattern.match(line)):
-            if close_prev:
-                print(close_prev)
-                close_prev = ''
-            output_frequency_score(match)
-            saw_frequency_score = True
-        elif line.lstrip()[0] == "•":
-            if close_prev:
-                print(close_prev)
-                close_prev = ''
-            close_prev = output_example(line.lstrip())
-        elif saw_frequency_score and contraction_pattern.match(line):
-            if close_prev:
-                print(close_prev)
-                close_prev = ''
-            saw_frequency_score = False
-            close_prev = output_contraction_header(contraction_pattern.match(line))
-        else:
-            print(line.lstrip())
-    print(close_prev)
-    print("</div>")
+        if line.strip():
+            print(line)
+
+    # try to parse lines and print as HTML
+    # print('<!DOCTYPE html>')
+    # print('<head><meta charset="utf-8"></head>')
+    # print('<style>body { font-size: 60pt; }</style>')
+    # in_entry = False
+    # saw_frequency_score = False
+    # close_prev = ''
+    # for line in lines:
+    #     if not line:
+    #         if close_prev:
+    #             print(close_prev)
+    #             close_prev = ''
+    #         continue
+    #     if (match := headword_pattern.match(line)):
+    #         if close_prev:
+    #             print(close_prev)
+    #             close_prev = ''
+    #         if in_entry:
+    #             print("</div>")
+    #         print(NEXT_SCREEN)
+    #         in_entry = True
+    #         saw_frequency_score = False
+    #         print("<div class='entry'>")
+    #         close_prev = output_headword(match)
+    #     elif (match := polysemous_headword_pattern.match(line)):
+    #         if close_prev:
+    #             print(close_prev)
+    #             close_prev = ''
+    #         close_prev = output_single_meaning(match)
+    #     elif (match := secondary_meaning_pattern.match(line)):
+    #         if close_prev:
+    #             print(close_prev)
+    #             close_prev = ''
+    #         close_prev = output_secondary_meaning(match)
+    #     elif (match := frequency_score_pattern.match(line)):
+    #         if close_prev:
+    #             print(close_prev)
+    #             close_prev = ''
+    #         output_frequency_score(match)
+    #         saw_frequency_score = True
+    #     elif line.lstrip()[0] == "•":
+    #         if close_prev:
+    #             print(close_prev)
+    #             close_prev = ''
+    #         close_prev = output_example(line.lstrip())
+    #     elif saw_frequency_score and contraction_pattern.match(line):
+    #         if close_prev:
+    #             print(close_prev)
+    #             close_prev = ''
+    #         saw_frequency_score = False
+    #         close_prev = output_contraction_header(contraction_pattern.match(line))
+    #     else:
+    #         print(line.lstrip())
+    # print(close_prev)
+    # print("</div>")
 
 def output_headword(match):
     print('<h1>' + '<span class="rank">' + match.group('rank') + '</span> ' + '<span class="headword">' + match.group('headword'))
