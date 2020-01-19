@@ -5,7 +5,7 @@ import re
 
 
 frequency_score_pattern = re.compile(f"^\\s+[0-9,]+$")
-contraction_pattern = re.compile(f'^\\s+\\w+')
+related_pattern = re.compile(f'^\\s+\\w+')
 
 def separate_entries(lines):
     entries = []
@@ -23,15 +23,28 @@ def separate_entries(lines):
     entries.append(entry)
     return entries
 
-def classify_entry(entry):
-    type_ = {'lettered': False, 'numbered': False}
+def tokenize(entry):
+    type_ = {'lettered': False, 'numbered': False, 'related_headers': []}
     last_line_was_score = False
     for line_num, line in enumerate(entry):
+
+        if last_line_was_score:
+            last_line_was_score = False
+            if (match := related_pattern.match(line)):
+                type_['related_headers'].append(line_num)
+        elif (match := frequency_score_pattern.match(line)):
+            last_line_was_score = True
+
+
+
         if ' b) ' in line:
             type_['lettered'] = True
         elif ' 2 ' in line:
             type_['numbered'] = True
-    return type_
+
+    if not type_['related_headers']:
+        del type_['related_headers']
+    return entry, type_
 
 def output_entries(classified_entries):
     for entry, type_ in classified_entries:
@@ -46,7 +59,7 @@ def main(argv):
     with open(argv[1]) as f:
         lines = f.readlines()
         entries = separate_entries(lines)
-        entries = [(entry, classify_entry(entry)) for entry in entries]
+        entries = [tokenize(entry) for entry in entries]
         output_entries(entries)
 
 
