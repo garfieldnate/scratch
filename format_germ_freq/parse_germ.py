@@ -1,7 +1,11 @@
+# Abandon! Tries to tokenize and parse all at once and fails miserably
 from collections import namedtuple
 import sys
 
+from pprint import PrettyPrinter
 from pyparsing import alphas, Word, nums, oneOf, SkipTo, Combine, tokenMap, Suppress, Literal, Optional, delimitedList, restOfLine, ZeroOrMore, ParseResults, OneOrMore, LineEnd, NotAny
+
+printer = PrettyPrinter(indent=4)
 
 def process_usage(string, location, parse_tree):
     usage = {'genre': parse_tree['genre']}
@@ -39,42 +43,42 @@ def buildTree(string, location, parse_tree):
 
 
 bullet = Suppress(Word("•"))#.setParseAction(buildTree)
-bullet_text = (bullet + SkipTo(Word(nums) | bullet)('example'))#.setParseAction(buildTree)
-score = Word(nums)('score')# + NotAny(Word(alphas))#.setDebug()#.setParseAction(buildTree)
+bullet_text = (bullet + SkipTo(Word(nums) | bullet)('example')).setParseAction(buildTree)
+score = Word(nums)('score')#.setParseAction(buildTree)
 
-rank = Word(nums)('rank')#.setParseAction(buildTree)
-pos = oneOf("adj adv art aux conj inf interj num part prep pron verb der die das", asKeyword=True)('pos')#.setParseAction(buildTree)
-unified_headword = SkipTo(pos, failOn=Word(nums) | bullet)('unified_headword')#.setParseAction(buildTree)
-english = SkipTo('\n')('english')#.setParseAction(buildTree)
-unified_header = (rank + unified_headword + pos + english)#.setParseAction(buildTree)
+rank = Word(nums)('rank').setParseAction(buildTree)
+pos = oneOf("adj adv art aux conj inf interj num part prep pron verb der die das", asKeyword=True)('pos').setParseAction(buildTree)
+unified_headword = SkipTo(pos, failOn=Word(nums) | bullet)('unified_headword').setParseAction(buildTree)
+english = SkipTo('\n')('english').setParseAction(buildTree)
+unified_header = (rank + unified_headword + pos + english).setParseAction(buildTree)
 
-lettered_header = (rank + SkipTo(pos, failOn=Literal('(') | nums | bullet)('lettered_headword') + pos)
-lettered_subheader = Word('ab') + Literal(')') + restOfLine + Suppress(SkipTo(bullet))
+# lettered_header = (rank + SkipTo(pos, failOn=Literal('(') | nums | bullet)('lettered_headword') + pos)
+# lettered_subheader = Word('ab') + Literal(')') + restOfLine + Suppress(SkipTo(bullet))
 
-subheader_number = Word(nums, max=1)
+subheader_number = Word(nums, max=1).setParseAction(buildTree)
 # TODO: parse out English, German and POS if possible
-numbered_subheader = subheader_number + restOfLine + Suppress(SkipTo(bullet))
-partial_headword = SkipTo(subheader_number)
-partial_header = (rank + partial_headword)
+numbered_subheader = (subheader_number + restOfLine + Suppress(SkipTo(bullet))).setParseAction(buildTree)
+partial_headword = SkipTo(subheader_number).setParseAction(buildTree)
+partial_header = (rank + partial_headword).setParseAction(buildTree)
 
-genre = oneOf("A I L N S", asKeyword=True)('genre')#.setParseAction(buildTree)
+genre = oneOf("A I L N S", asKeyword=True)('genre').setParseAction(buildTree)
 common = (Literal('+')('common') + genre).setParseAction(process_usage)
 uncommon = (Literal('–')('uncommon') + genre).setParseAction(process_usage) # Note: not a '-' character!
-usage_el = (common | uncommon)('usage')
+usage_el = (common | uncommon)('usage').setParseAction(buildTree)
 # TODO: output structure wrong
 usage = delimitedList(usage_el).setParseAction(buildTree)
 
-subheader = (Combine(Word(alphas) + restOfLine) + Suppress(SkipTo(bullet)))#.setDebug()#.setParseAction(buildTree)
+subheader = (Combine(Word(alphas) + restOfLine) + Suppress(SkipTo(bullet)))('subheader').setParseAction(buildTree)
 
-content = (bullet_text + score + Optional(usage))('content').setParseAction(buildTree)
+content = (bullet_text + score + Optional(usage))('content*').setParseAction(buildTree)
 
-lettered_bullet = (bullet + SkipTo(lettered_subheader | score))
-lettered_section = (lettered_subheader + lettered_bullet)('lettered_section')#.setDebug()
+# lettered_bullet = (bullet + SkipTo(lettered_subheader | score))
+# lettered_section = (lettered_subheader + lettered_bullet)('lettered_section')#.setDebug()
 
 entry = ((unified_header + content + ZeroOrMore(subheader + content)) | 
          (partial_header + OneOrMore(numbered_subheader + 
-                OneOrMore(bullet_text + Optional(score) + ZeroOrMore(subheader + content)))) | 
-         (lettered_header + lettered_section + lettered_section + score)).setParseAction(buildTree)
+                OneOrMore(bullet_text + Optional(score) + ZeroOrMore(subheader + content))))).setParseAction(buildTree)
+ # | (lettered_header + lettered_section + lettered_section + score)
 
 # strip extra whitespace stored in the SkipTo tokens
 for el in [unified_headword, english, bullet_text]:
@@ -94,53 +98,46 @@ samples.append("""3111 Mörder der murderer
        gefunden werden.
         23 –A, –S""")
 
-# samples.append("""123 heißen verb to be called
-#     • Sie heißt Anja.
-#        740
-#     das heißt, d.h. that is, i.e.
-#     • Morgen Nachmittag muss ich zum Arzt,
-#       das heißt, ich habe keine Zeit.
-#        285""")
+# Next: this structure is wrong
+samples.append("""123 heißen verb to be called
+    • Sie heißt Anja.
+       740
+    das heißt, d.h. that is, i.e.
+    • Morgen Nachmittag muss ich zum Arzt,
+      das heißt, ich habe keine Zeit.
+       285""")
 
-# samples.append("""574 enthalten
+samples.append("""574 enthalten
 
-#     1 verb to contain
-#     • Die Creme enthält keine
-#       Konservierungsstoffe.
-#     2 enthalten (sich) to abstain
-#     • Ich enthalte mich der Stimme.
+    1 verb to contain
+    • Die Creme enthält keine
+      Konservierungsstoffe.
+    2 enthalten (sich) to abstain
+    • Ich enthalte mich der Stimme.
 
-#           148""")
+          148""")
 
-# samples.append("""589 pro
-#     1 prep per
-#     • Wir trinken pro Woche etwa einen Kasten
-#       Bier.
-#     2 Pro das pro
-#     • Pro und Contra sollte man gewissenhaft
-#       abwägen.
-#        145""")
+samples.append("""589 pro
+    1 prep per
+    • Wir trinken pro Woche etwa einen Kasten
+      Bier.
+    2 Pro das pro
+    • Pro und Contra sollte man gewissenhaft
+      abwägen.
+       145""")
 
-# # Note: I moved (clothes) up a line because it seems to be the only place where the definition spans two lines
-# samples.append("""2302 ausziehen verb a) to move out, take off (clothes)
-#       • Nasse Strümpfe sollte man ausziehen, damit
-#         man sich nicht erkältet.
-#         b) ausziehen (sich) to undress, get
-#         undressed
+samples.append("""126 erst
+    1 adv ﬁrst, only, not until
+    • Erst die Arbeit, dann das Vergnügen.
+    2 part
+    • Da geht’s erst richtig los.
+       737
+    erst mal ﬁrst
+    • Darüber muss ich erst mal nachdenken.
+       123""")
 
-#       • Die Kinder ziehen sich vor dem
-#         Mittagsschlaf aus.
-#         34""")
-
-# samples.append("""126 erst
-#     1 adv ﬁrst, only, not until
-#     • Erst die Arbeit, dann das Vergnügen.
-#     2 part
-#     • Da geht’s erst richtig los.
-#        737
-#     erst mal ﬁrst
-#     • Darüber muss ich erst mal nachdenken.
-#        123""")
+# Note: we do not handle entries with a)/b) sections; they complicate things, and there are only 10,
+# so it is easier to process/import them manually
 
 # def pprint(node, tab=""):
 #     print(node)
@@ -160,7 +157,8 @@ def parse_file(file):
     for sample in samples:
         tree = entry.parseString(sample, parseAll=True)
         # print(tree.dump())
-        print(tree)
+        # print(tree)
+        printer.pprint(tree[0])
         # print(type(tree.value))
         # pprint(tree[0])
 

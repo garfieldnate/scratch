@@ -1,5 +1,7 @@
 # input should be output of format_germ_freq.txt
 # output will be separated and tokenized entries
+# Entries that have a 'manual': True in the header could not be processed and
+# will have to be imported by hand
 import sys
 import re
 
