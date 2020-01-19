@@ -107,6 +107,8 @@ def split_cols(lines, index):
 def output_new_lines(lines):
     # print all non-empty lines as-is
     for line in lines:
+        # fix spread elipses
+        line = line.replace(' . . .', '...')
         if line.strip():
             print(line)
 
