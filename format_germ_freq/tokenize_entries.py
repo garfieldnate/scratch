@@ -15,7 +15,7 @@ GENRE_RE = f"[{''.join(GENRE)}]"
 # rank and German, followed optionally by POS and English
 headword_pattern = re.compile(f"^\\s*(?P<rank>\\d+) (?P<headword>.+?)(?: (?P<pos>{'|'.join(POS)}) (?P<english>.+))?$")
 # index, the POS and the english
-numbered_subheader_pattern = re.compile(f"^\\s*(?P<sub_index>\\d+) (?:(?P<alt1>.+)?(?P<pos>{'|'.join(POS)})|(?P<alt2>.+\\(sich\\) ))(?P<english>.+)?$")
+numbered_subheader_pattern = re.compile(f"^\\s*(?P<sub_index>\\d+) (?:(?P<alt1>.+)?(?P<pos>\\b(?:{'|'.join(POS)})\\b)|(?P<alt2>.+\\(sich\\) ))(?P<english>.+)?$")
 
 # Note: m-dash not n-dash (– not -)
 frequency_score_pattern = re.compile(f"^\\s+(?P<score>[0-9,]+)(?P<usage>(?: [+–]{GENRE_RE},?)*)$")
@@ -102,13 +102,14 @@ def tokenize(entry):
                     emit_text(text)
             continue
 
+        stripped_line = line.strip()
         if ' b) ' in line:
             # These complicate auto-processing, so will be manually handled later
             type_['lettered'] = True
             type_['manual'] = True
             type_['manual_reason'] = 'lettered headers'
             start_token('letter')
-        elif line.strip().startswith('2 ') or line.strip().startswith('1 '):
+        elif stripped_line.startswith('1 ') or (type_['numbered'] and (stripped_line.startswith('2 ') or stripped_line.startswith('3 '))):
             type_['numbered'] = True
             if (match := numbered_subheader_pattern.match(line)):
                 start_token('sub_index')
