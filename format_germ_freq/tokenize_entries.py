@@ -10,6 +10,7 @@ import re
 POS = ["adj", "adv", "art", "aux", "conj", "inf", "interj", "num", "part", "prep", "pron", "verb", "der", "die", "das"]
 ART = {"der", "die", "das"}
 GENRE = ["A", "I", "L", "N", "S"]
+GENRE_NAMES = {'A': 'academia', 'I': 'instructional', 'L': 'literature', 'N': 'news', 'S': 'spoken'}
 GENRE_RE = f"[{''.join(GENRE)}]"
 # rank and German, followed optionally by POS and English
 headword_pattern = re.compile(f"^\\s*(?P<rank>\\d+) (?P<headword>.+?)(?: (?P<pos>{'|'.join(POS)}) (?P<english>.+))?$")
@@ -89,8 +90,16 @@ def tokenize(entry):
             start_token('score')
             emit_text(match.group('score'))
             if (usage := match.group('usage')):
-                start_token('usage')
-                emit_text(usage)
+                for u in usage.split(', '):
+                    u = u.strip()
+                    start_token('usage')
+                    if '+' in u:
+                        text = "common in "
+                    else:
+                        text = "uncommon in "
+                    genre_code = u[1]
+                    text += GENRE_NAMES[genre_code]
+                    emit_text(text)
             continue
 
         if ' b) ' in line:
@@ -126,6 +135,7 @@ def tokenize(entry):
                 # raise ValueError("Couldn't process subheader " + line)
         elif '•' in line:
             start_token('example')
+            line = line.split("•")[1]
 
         # if no new tokens were found, add current line to previous token
         if not current_token_name:
