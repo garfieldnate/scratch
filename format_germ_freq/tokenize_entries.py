@@ -4,13 +4,14 @@
 # will have to be imported by hand
 import sys
 import re
+import json
 
 
 
 POS = ["adj", "adv", "art", "aux", "conj", "inf", "interj", "num", "part", "prep", "pron", "verb", "der", "die", "das"]
 ART = {"der", "die", "das"}
-GENRE = ["A", "I", "L", "N", "S"]
-GENRE_NAMES = {'A': 'academia', 'I': 'instructional', 'L': 'literature', 'N': 'news', 'S': 'spoken'}
+GENRE = ["A", "I", "L", "N", "S", "l"] # probably a typo that one line contains l instead of L
+GENRE_NAMES = {'A': 'academia', 'I': 'instructional', 'L': 'literature', 'l': 'literature', 'N': 'news', 'S': 'spoken'}
 GENRE_RE = f"[{''.join(GENRE)}]"
 # rank and German, followed optionally by POS and English
 headword_pattern = re.compile(f"^\\s*(?P<rank>\\d+) (?P<headword>.+?)(?: (?P<pos>{'|'.join(POS)}) (?P<english>.+))?$")
@@ -47,7 +48,7 @@ def tokenize(entry):
 
         if current_token_name:
             token_text = ' '.join([s.strip() for s in current_token_contents])
-            new_entry.append(f'<{current_token_name}>{token_text}</{current_token_name}>\n')
+            new_entry.append(f'<{current_token_name}>{token_text}\n')
 
         current_token_name = None
         current_token_contents = []
@@ -156,7 +157,7 @@ def tokenize(entry):
 
 def output_entries(classified_entries):
     for entry, type_ in classified_entries:
-        print(f"***{type_}")
+        print("***" + json.dumps(type_))
         for line in entry:
             print(line, end='')
         print()
