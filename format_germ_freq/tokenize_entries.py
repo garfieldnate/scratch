@@ -20,7 +20,7 @@ numbered_subheader_pattern = re.compile(f"^\\s*(?P<sub_index>\\d+) (?:(?P<alt1>.
 
 # Note: m-dash not n-dash (– not -)
 frequency_score_pattern = re.compile(f"^\\s+(?P<score>[0-9,]+)(?P<usage>(?: [+–]{GENRE_RE},?)*)$")
-related_pattern = re.compile(f'^\\s+\\w+')
+related_pattern = re.compile(f'^\\s+[^•\\d ]')
 
 def separate_entries(lines):
     entries = []
@@ -101,6 +101,8 @@ def tokenize(entry):
                     genre_code = u[1]
                     text += GENRE_NAMES[genre_code]
                     emit_text(text)
+            # multi-line score and usage are not possible
+            end_current_token()
             continue
 
         stripped_line = line.strip()
