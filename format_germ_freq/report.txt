@@ -1,0 +1,123 @@
+Please handle this one manually:
+***{"lettered": true, "numbered": true, "manual": true, "manual_reason": "lettered headers"}
+1 der, die, das
+1 art the
+• Der Mann küsst die Frau und das Kind
+schaut zu.
+2 pron a) that, those
+• Das ist mein Fahrrad.
+b) who, that
+• Die Frau, die nebenan wohnt, heißt Renate.
+
+Please handle this one manually:
+***{"lettered": true, "numbered": true, "manual": true, "manual_reason": "lettered headers"}
+6 zu
+1 prep to, at
+• Kommen Sie zu uns?
+2 part a) too
+• Das ist zu viel.
+b) to
+• Claudia hat viel zu tun.
+14,615
+
+Please handle this one manually:
+***{"lettered": true, "numbered": true, "manual": true, "manual_reason": "lettered headers"}
+9 werden
+1 verb to become, get
+• Ich werde müde.
+2 aux a) (future tense)
+• Wir werden Urlaub an der Ostsee machen.
+b) (passive voice)
+• Der Computer wird heute schon repariert.
+11,016
+
+Please handle this one manually:
+***{"lettered": true, "numbered": true, "manual": true, "manual_reason": "lettered headers"}
+10 sie
+1 pron a) she, her
+• Sie heißt Maria. Ich kenne sie.
+b) they, them
+• Sie kommen heute nicht.
+2 Sie pron you
+• Ich verstehe Sie nicht.
+10,245
+
+Please handle this one manually:
+***{"lettered": true, "numbered": true, "manual": true, "manual_reason": "lettered headers"}
+26 ihr
+1 pron a) you, her
+• Habt ihr das gewusst?
+• Ich höre ihr zu.
+b) her, their, hers, theirs
+• Der Junge mit den blonden Haaren ist ihr
+Sohn.
+Ihr
+2 pron your
+• Ist das Ihr Hund?
+4,777
+
+Please handle this one manually:
+***{"lettered": true, "numbered": false, "manual": true, "manual_reason": "lettered headers"}
+27 ja part a) yes, of course
+• Ja, ich bin damit einverstanden.
+b) certainly, really
+• Das ist ja komisch.
+4,767
+
+Please handle this one manually:
+***{"lettered": true, "numbered": false, "manual": true, "manual_reason": "lettered headers"}
+67 mich pron a) me
+• Lass mich in Ruhe!
+b) Ich habe mich verirrt.
+1,734
+
+Please handle this one manually:
+***{"lettered": true, "numbered": false, "manual": true, "manual_reason": "lettered headers"}
+509 Bank die
+a) bank
+• Ich habe noch in der Bank zu tun.
+b) bench
+• Die Bank ist frisch gestrichen.
+162
+
+Please handle this one manually:
+***{"lettered": false, "numbered": true, "manual": true, "manual_reason": "unmatchable subheader"}
+1569 umgehen
+1 verb to treat, handle
+• Viele Chefs gehen mit ihren Angestellten
+sehr locker um.
+2 to avoid, circumvent
+• Am besten umgehen wir das Problem.
+55
+
+Please handle this one manually:
+***{"lettered": false, "numbered": true, "manual": true, "manual_reason": "unmatchable subheader"}
+1934 Gesundheit
+1 die health
+• Rauchen gefährdet die Gesundheit.
+2 Gesundheit! Bless you!
+• Gesundheit!
+43
+
+Please handle this one manually:
+***{"lettered": true, "numbered": false, "manual": true, "manual_reason": "lettered headers"}
+2302 ausziehen verb a) to move out, take off
+(clothes)
+• Nasse Strümpfe sollte man ausziehen, damit
+man sich nicht erkältet.
+b) ausziehen (sich) to undress, get
+undressed
+• Die Kinder ziehen sich vor dem
+Mittagsschlaf aus.
+34
+
+Please handle this one manually:
+***{"lettered": true, "numbered": false, "manual": true, "manual_reason": "lettered headers"}
+2572 übergehen verb a) to pass into
+• Der Frühling geht in den Sommer über.
+b) to ignore
+• Keine Angst, wir übergehen Sie nicht.
+30
+
+{'pos': ['conj'], 'en': ['and'], 'ex': ['Erwin und Brigitte gehen heute Abend in den Auerbachkeller essen.'], 'usage': [], 'rel': [], 'rank': '2', 'headword': 'und', 'score': '28,445'}
+Calling model.add_tango("de", {'pronunciation': '', 'image_url': '', 'image_base64': '', 'headword': 'und', 'source': 'FDG: 2', 'definition': 'and', 'notes': 'frequency score: 28,445', 'example': ['Erwin und Brigitte gehen heute Abend in den Auerbachkeller essen.'], 'morphology': 'conj'})
